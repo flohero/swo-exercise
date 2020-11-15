@@ -1,5 +1,5 @@
 build/*
-
+*.pdf
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,clion+all,cmake,vscode,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,clion+all,cmake,vscode,vim
