@@ -79,7 +79,7 @@ Initialsiert wird mit der ersten Zeile als Null und die erste Spalte aufsteigend
 Die Editiersequenz beginnt nicht ganz rechts unten,
 sondern bei dem kleinsten Wert in der letzten Zeile.
 
-
+<<<
 == Source Code
 *Anmerkung: Es wird als Rückgabetyp und auch für Indizes meist `size_t` statt `int` verwendet.*
 
@@ -89,7 +89,6 @@ sondern bei dem kleinsten Wert in der letzten Zeile.
 ----
 include::{sourcedir}/align/align.h[]
 ----
-
 .align.c
 [source,c,linenums]
 ----
@@ -114,7 +113,7 @@ include::{sourcedir}/align/utils.c[]
 .main.c
 [source,c,linenums]
 ----
-include::{sourcedir}/align/main.c[lines=6..19]
+include::{sourcedir}/align/main.c[lines=6..22]
 ----
 
 .Levenshtein-Output
@@ -279,6 +278,42 @@ w| asdf
 v|ghjkl
 -------
  |ICCCC
+
+       g   h   j   k   l
+   0 ← 1 ← 2 ← 3 ← 4 ← 5
+   ↑ ↖   ↖   ↖   ↖   ↖
+a  1   1 ← 2 ← 3 ← 4 ← 5
+   ↑ ↖ ↑ ↖   ↖   ↖   ↖
+s  2   2   2 ← 3 ← 4 ← 5
+   ↑ ↖ ↑ ↖ ↑ ↖   ↖   ↖
+d  3   3   3   3 ← 4 ← 5
+   ↑ ↖ ↑ ↖ ↑ ↖ ↑ ↖   ↖
+f  4   4   4   4   4 ← 5
+
+w|ghjkl
+v|asdf
+-------
+ |CCCCD
+
+w|ghjkl
+v|asd f
+-------
+ |CCCDC
+
+w|ghjkl
+v|as df
+-------
+ |CCDCC
+
+w|ghjkl
+v|a sdf
+-------
+ |CDCCC
+
+w|ghjkl
+v| asdf
+-------
+ |DCCCC
 ----
 
 image::./levenshtein1.png[]
@@ -291,7 +326,7 @@ Für den gesamten Output bitte `longest_shared_substr.txt` öffnen.
 .main.c
 [source,c]
 ----
-include::{sourcedir}/align/main.c[lines=21..35]
+include::{sourcedir}/align/main.c[lines=24..38]
 ----
 
 .Longest-shared-substring
@@ -301,15 +336,17 @@ include::longest_shared_substr.txt[lines=1..123]
 ...
 ----
 
+<<<
 === Unscharfe Mustersuche
 *Anmerkung:
 Beim Output kann es durch Spaces in den Test-Cases zu Ausgaben führen,
 welche fehlerhaft aussehen, es aber nicht sind,
 z.B. wenn ein Space gelöscht wird.*
+
 .main.c
 [source,c]
 ----
-include::{sourcedir}/align/main.c[lines=37..51]
+include::{sourcedir}/align/main.c[lines=40..54]
 ----
 
 .Fuzzy-Search-Output
@@ -415,7 +452,6 @@ v|Pi  Jesus
  |  D     I
 ----
 
-Hier der Output ohne Tabelle.
-
+.Hier der Output ohne Tabelle.
 image::./fuzzy_search.png[]
 

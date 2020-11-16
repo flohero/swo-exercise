@@ -15,7 +15,10 @@ void levenshtein_test_cases() {
   print_levenshtein_edit_sequences("hello", "hallo");
 
   // No matching character and different length
+  // Every operation should be a change, but one should be an insert
   print_levenshtein_edit_sequences("asdf", "ghjkl");
+  // Every operation should be a change, but one should be a delete
+  print_levenshtein_edit_sequences("ghjkl", "asdf");
 }
 
 void longest_shared_subs_str_test_cases() {
@@ -51,9 +54,12 @@ void fuzzy_search_test_cases() {
 }
 
 int main(void) {
+  levenshtein_test_cases();
+  longest_shared_subs_str_test_cases();
   fuzzy_search_test_cases();
-  /*printf("shared subst\n");
+  /*
   print_longest_shared_substr("TGCATA", "ATCTGAT");
+  print_levenshtein_edit_sequences("TGCATA", "ATCTGAT");
   printf("fuzzy search\n");
   print_fuzzy_search("SVLQDRSMPHQEILAADEVLQESEMRQQDMISHDE", "EIQADEVRL");*/
   return EXIT_SUCCESS;

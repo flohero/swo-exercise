@@ -69,13 +69,15 @@ size_t revstr(char str[]) {
 /**
  * Build a string matrix
  * @param mat_type which type of matrix should be generated.
- * There are three type: levenshtein matrix, longest substring matrix and fuzzy search matrix
+ * There are three types: levenshtein matrix, longest substring matrix and fuzzy search matrix
  */
 void build_str_matrix(char *str1, char *str2, matrix m,
                       matrix_t mat_type) {
   size_t len1 = strlen(str1), len2 = strlen(str2);
-
+  // Variables for the different formulas of levenshtein and shared substring
+  size_t left_and_up_inc = 1, char_same_inc = 0;
   // Use a compare function
+  // for levenshtein and fuzzy search its min_of_3
   size_t (*comp_func)(size_t, size_t, size_t) = min_of_3;
   switch (mat_type) {
     case levenshtein_mat:
@@ -85,6 +87,8 @@ void build_str_matrix(char *str1, char *str2, matrix m,
       init_fuzzy_search_matrix(len1, len2, m);
       break;
     case shared_substr_mat:
+      left_and_up_inc = 0;
+      char_same_inc = 1;
       init_longest_shared_substr_matrix(len1, len2, m);
       comp_func = max_of_3;
       break;
@@ -94,27 +98,11 @@ void build_str_matrix(char *str1, char *str2, matrix m,
 
   for (size_t i = 1; i <= len2; i++) {
     for (size_t j = 1; j <= len1; j++) {
-      size_t up_val, left_val, diag_val;
-      switch (mat_type) {
-        // levenshtein and fuzzy search calculate the matrix the same way
-        case levenshtein_mat:
-        case fuzzy_search_mat:
-          up_val = m[i - 1][j].val + 1;
-          left_val = m[i][j - 1].val + 1;
-          diag_val = m[i - 1][j - 1].val + (str1[j - 1] == str2[i - 1] ? 0 : 1);
-          break;
-        // Different formula for shared substr
-        case shared_substr_mat:
-          up_val = m[i - 1][j].val;
-          left_val = m[i][j - 1].val;
-          diag_val = m[i - 1][j - 1].val + (str1[j - 1] == str2[i - 1] ? 1 : 0);
-          break;
-        default:
-          return;
-      }
+      size_t up_val = m[i - 1][j].val + left_and_up_inc;
+      size_t left_val = m[i][j - 1].val + left_and_up_inc;
+      size_t diag_val = m[i - 1][j - 1].val + (str1[j - 1] == str2[i - 1] ? char_same_inc : left_and_up_inc);
       size_t res = comp_func(up_val, left_val, diag_val);
       m[i][j].val = res;
-
       // Set which Operations can be used
       m[i][j].up = res == up_val;
       m[i][j].left = res == left_val;
@@ -122,7 +110,6 @@ void build_str_matrix(char *str1, char *str2, matrix m,
     }
   }
 }
-
 
 /**
  * Print the matrix with the solution paths
@@ -208,6 +195,9 @@ void print_edit_sequences(char *str1, char *str2, matrix_t mat_type) {
   }
 }
 
+/**
+ * @returns the index of the first minimum value in an array
+ */
 static size_t get_minimum_index(levenshtein_rec array[], size_t len) {
   size_t min = array[0].val;
   size_t index = 0;
