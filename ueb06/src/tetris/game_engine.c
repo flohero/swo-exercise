@@ -131,8 +131,8 @@ extern void ge_on_key(GLFWwindow *window, int key, int scancode, int action, int
     case GLFW_KEY_SPACE:
       if (action == GLFW_PRESS && !paused) {
         while (cb_try_move(0, -1, d0));
-        return;
       }
+      return;
       // Pause game
     case GLFW_KEY_ESCAPE:
       if (action == GLFW_PRESS) {

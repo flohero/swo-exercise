@@ -17,7 +17,7 @@ typedef enum {
   color_magenta = color_red | color_blue,
   color_cyan = color_green | color_blue,
   color_white = color_red | color_green | color_blue,
-  color_orange = 0xFFA500U
+  color_orange = 0x008ddeU
 } color;
 
 typedef enum {

@@ -2,6 +2,7 @@
 :author: Florian Weingartshofer
 :email: <S1910307103@students.fh-hagenberg.at>
 :reproducible:
+:experimental:
 :listing-caption: Listing
 :source-highlighter: rouge
 :sourcedir: ../src
@@ -12,6 +13,35 @@
 <<<
 == Lösungsidee
 *Anmerkung: Die verzehrten Bilder werden durch die Skalierung meines Windows Managers verursacht und haben nichts mit dem Programm selbst zu tun!*
+
+=== Steuerung
+|===
+|Key |Funktion
+
+|kbd:[S], kbd:[J]
+| Schneller Fallen
+
+|kbd:[A], kbd:[H]
+| Nach Links
+
+|kbd:[D], kbd:[L]
+| Nach Rechts
+
+|kbd:[Q]
+| Rotieren gegen Uhrzeigersinn
+
+|kbd:[E]
+| Rotieren im Uhrzeigersinn
+
+|kbd:[Space]
+| Hard Drop
+
+|kbd:[C]
+| Speichere Block
+
+|kbd:[Esc]
+| Pausieren/Fortfahren
+|===
 
 === Speichern der Tetriminos
 Um die Position der einzelnen Minos in einem Tetrimino
@@ -27,7 +57,7 @@ Als Ausgangspunkt zur Berechnung der Minos wird die linke obere Position,
 diese ist im Block Struct hinterlegt, in einer Matrix genutzt.
 
 Hier die Matrix eines T-Blocks,
-die Einser geben an welche Positionen in der Matrix später errechnet werden.
+die Einser geben an welche Positionen in der Matrix später gerendert werden.
 
 .Matrix eines T-Blocks
 [latexmath]
@@ -135,7 +165,7 @@ die bei der Platzierung gelöscht wurden. Der Score wird dann einfach aufaddiert
 points(deleted\_rows)\coloneqq
 \begin{cases}
     1200, & \text{if }\; deleted\_rows = 4 \land \text{continuous tetris}\\
-    800,  & \text{if }\; deleted\_rows = 4\\
+    800,  & \text{if }\; deleted\_rows = 4\land\neg \text{continuous tetris}\\
     100\cdot deleted\_rows & \text{otherwise}
 \end{cases}
 ++++
