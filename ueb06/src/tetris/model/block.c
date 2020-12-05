@@ -1,9 +1,9 @@
-#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "block.h"
 #include "../game_board.h"
 #include "../render.h"
+#include "block_types.h"
 
 static position get_pos_of_i_block(block block, int index);
 
@@ -24,10 +24,6 @@ void render_block(const block block) {
     position pos = block.position_func(block, i);
     render_quad(pos, block.color);
   }
-}
-
-void render_tetrimino(const mino tetrimino) {
-  render_quad(tetrimino.pos, tetrimino.color);
 }
 
 block new_block() {
@@ -66,8 +62,8 @@ block new_block() {
       current.position_func = get_pos_of_t_block;
       break;
     default:
-      current.color = color_magenta;
-      current.position_func = get_pos_sz_block;
+      printf("Illegal Block Type");
+      exit(EXIT_FAILURE);
   }
   return current;
 }

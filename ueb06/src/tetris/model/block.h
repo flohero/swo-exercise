@@ -20,14 +20,7 @@ struct block {
   position_func position_func;
 };
 
-typedef struct {
-  position pos;
-  color color;
-} mino;
-
 extern void render_block(block block);
-
-extern void render_tetrimino(mino tetrimino);
 
 extern block new_block();
 

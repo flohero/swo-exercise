@@ -4,6 +4,10 @@
 
 #ifndef SWO3_BLOCK_TYPES_H
 #define SWO3_BLOCK_TYPES_H
+
+#include <assert.h>
+#include <stdbool.h>
+
 typedef enum {
   color_black = 0x000000U,
   color_red = 0x0000FFU,
@@ -39,9 +43,16 @@ typedef struct {
   int x, y;
 } position;
 
+typedef struct {
+  position pos;
+  color color;
+} mino;
+
 degrees_of_90 add(degrees_of_90 left, degrees_of_90 right);
 
 block_type random_block_type(void);
+
+extern void render_mino(mino m);
 
 
 #endif //SWO3_BLOCK_TYPES_H

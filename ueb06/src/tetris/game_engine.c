@@ -6,6 +6,14 @@
 #include "timer.h"
 #include "saved_block.h"
 
+#define LEVEL_FACTOR 10
+
+#define POINTS_PER_ROW 100
+
+#define POINTS_PER_CONTINOUS_TETRIS 1200
+
+#define POINTS_PER_TETRIS 800
+
 static bool game_over = false;
 static int points = 0;
 static int lines_cleared = 0;
@@ -42,7 +50,7 @@ extern bool ge_handle_move(int dx, int dy, degrees_of_90 deg) {
     // print stats like points and level
     print_stats();
 
-    // ALlow the player to switch the saved block with the current block
+    // Allow the player to switch the saved block with the current block
     can_switch = true;
 
     // Check if the current block is at an valid position
@@ -93,25 +101,25 @@ extern void ge_on_key(GLFWwindow *window, int key, int scancode, int action, int
     case GLFW_KEY_S:
       dy = -1;
       break;
-    // Move block to the left
+      // Move block to the left
     case GLFW_KEY_H:
     case GLFW_KEY_A:
       dx = -1;
       break;
-    // MOve block to the right
+      // Move block to the right
     case GLFW_KEY_L:
     case GLFW_KEY_D:
       dx = 1;
       break;
-    // Rotate block counterclockwise
+      // Rotate block counterclockwise
     case GLFW_KEY_Q:
-      deg = d90neg;
-      break;
-    // Rotate block clockwise
-    case GLFW_KEY_E:
       deg = d90;
       break;
-    // Save current block
+      // Rotate block clockwise
+    case GLFW_KEY_E:
+      deg = d90neg;
+      break;
+      // Save current block
     case GLFW_KEY_C:
       if (action == GLFW_PRESS && can_switch && !paused) {
         block new_current_block = sb_switch_saved_block(cb_get_block());
@@ -119,13 +127,13 @@ extern void ge_on_key(GLFWwindow *window, int key, int scancode, int action, int
         can_switch = false;
       }
       return;
-    // Hard drop current block
+      // Hard drop current block
     case GLFW_KEY_SPACE:
       if (action == GLFW_PRESS && !paused) {
         while (cb_try_move(0, -1, d0));
         return;
       }
-    // Pause game
+      // Pause game
     case GLFW_KEY_ESCAPE:
       if (action == GLFW_PRESS) {
         pause();
@@ -148,13 +156,13 @@ extern void ge_on_key(GLFWwindow *window, int key, int scancode, int action, int
 
 static void calculate_points(int rows) {
   points += rows == MINOS_PER_BLOCK
-            ? (is_tetris ? 1200 : 800)
-            : rows * 100;
+            ? (is_tetris ? POINTS_PER_CONTINOUS_TETRIS : POINTS_PER_TETRIS)
+            : rows * POINTS_PER_ROW;
   is_tetris = rows == MINOS_PER_BLOCK;
 }
 
 static int calculate_level(void) {
-  return lines_cleared / 10;
+  return lines_cleared / LEVEL_FACTOR;
 }
 
 static void pause(void) {

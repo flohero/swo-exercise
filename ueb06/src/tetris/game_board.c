@@ -3,6 +3,7 @@
 #include "game_board.h"
 #include "saved_block.h"
 #include "render.h"
+#include "model/block_types.h"
 
 #define MAX_BLOCKS_COUNT ((GB_ROWS)*(GB_COLS))
 
@@ -50,7 +51,7 @@ extern void gb_render(void) {
   }
   sb_render_saved_block();
   for (size_t i = 0; i < tetrimino_counter; i++) {
-    render_tetrimino(tetriminos[i]);
+    render_mino(tetriminos[i]);
   }
 }
 

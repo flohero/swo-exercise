@@ -30,6 +30,7 @@ extern block sb_switch_saved_block(block b) {
   old_block.pos.y = GB_ROWS - 1;
   saved_block.pos.x = GB_COLS + 1;
   saved_block.pos.y = GB_ROWS - 1;
+  saved_block.orientation = d0;
   saved = true;
   return old_block;
 }

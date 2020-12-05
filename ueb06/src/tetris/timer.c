@@ -25,8 +25,8 @@ extern void timer_fire(void) {
   if (!timer_running) {
     return;
   }
-  int res = 48 - get_level() > 1 ? 48 - get_level() : 1;
-  if (glfwGetTime() >= (interval / 60) * res) {
+  int res = STANDARD_PACE - get_level() > 1 ? STANDARD_PACE - get_level() : 1;
+  if (glfwGetTime() >= (interval / FRAMES_PER_SECOND) * res) {
     callback();
     reset_time();
   }

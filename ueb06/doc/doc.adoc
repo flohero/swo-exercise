@@ -1,0 +1,159 @@
+= Abgabe 06: Tetris
+:author: Florian Weingartshofer
+:email: <S1910307103@students.fh-hagenberg.at>
+:reproducible:
+:listing-caption: Listing
+:source-highlighter: rouge
+:sourcedir: ../src
+:imgdir: ./img
+:toc:
+:toclevels: 4
+
+<<<
+== Lösungsidee
+*Anmerkung: Die verzehrten Bilder werden durch die Skalierung meines Windows Managers verursacht und haben nichts mit dem Programm selbst zu tun!*
+
+=== Speichern der Tetriminos
+Um die Position der einzelnen Minos in einem Tetrimino
+(im Code auch einfach `Block` genannt)
+zu berechnen, wird für jede Blockform eine Funktion erstellt.
+Diese gibt für einen Index die Position eines Minos zurück.
+Der Index muss zwischen 0 und exklusive 4 liegen,
+da 4 die Anzahl der erlaubten Minos in einem Standard Tetris Block ist.
+Um größere Blöcke oder andere Formen zu bauen, muss nur die Mino Count erhöht werden
+und eine Funktion zum berechnen der Positionen zur Verfügung gestellt werden.
+
+Als Ausgangspunkt zur Berechnung der Minos wird die linke obere Position,
+diese ist im Block Struct hinterlegt, in einer Matrix genutzt.
+
+Hier die Matrix eines T-Blocks,
+die Einser geben an welche Positionen in der Matrix später errechnet werden.
+
+.Matrix eines T-Blocks
+[latexmath]
+++++
+\begin{array}{c|ccc}
+  & 0 & 1 & 2\\
+\hline\\
+0 & 0 & 1 & 0\\
+1 & 1 & 1 & 1
+\end{array}
+++++
+
+.T-Block mit Startpunkt in weiß
+image::{imgdir}/t.png[t_block]
+.I-Block mit Startpunkt in weiß
+image::{imgdir}/i.png[i_block]
+
+=== Anzeigen des momentanen Blocks
+Die Positionen beim Index `i` werden mit der Farbe, welche im Block Struct gespeichert ist,
+gerendert.
+
+=== Fallen eines Blocks
+Der Block sollte alle 48 Frames um einen Mino fallen.
+Je höher das Level desto schneller fällt der Block.
+Die Formel lautet:
+
+.Formel für die Fallgeschwindigkeit des Blocks
+[latexmath]
+++++
+drop\_pace(level)\coloneqq
+\begin{cases}
+    \frac{1}{60} \cdot (48 - (5 \cdot level)), & \text{if }\; level < 10\\
+    0, & \text{otherwise}
+\end{cases}
+++++
+
+Um das momentane Level zu berechnen:
+
+.Momentanes Level
+[latexmath]
+++++
+current\_level(count\_deleted\_rows)\coloneqq
+int\left(\frac{count\_deleted\_rows}{10}\right)
+++++
+
+=== Rotieren des momentanten Blocks
+Mithilfe der Rotationsmatrix kann eine Position eines Minos um `90°` gegen den Uhrzeigersinn gedreht werden.
+Das Ergebnis wird dann in das Koordinatensystem des Spielboards eingefügt.
+
+.Rotationsmatrix
+[latexmath]
+++++
+Rotationsmatrix_{90}= \left(\begin{array}{cc}
+0 & -1\\
+1 & 0
+\end{array}\right)
+++++
+
+.Beispiel einer Rotation
+[latexmath]
+++++
+\left(
+\begin{array}{cc}
+0 & -1\\
+1 & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+    2\\
+    3
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+    -3\\
+    2
+\end{array}
+\right)
+++++
+
+=== Platzieren eines Blocks
+Sobald der Block am unteren Rand des Spielfelds angekommen ist
+oder auf einen schon liegenden Block trifft,
+wird er von einem Block zu Minos konvertiert,
+um das Löschen von Teilen eines Blockes einfacher zu machen.
+Dann wird der neue Block erstellt und gerendert.
+
+=== Löschen von Zeilen
+Wenn ein Block platziert wurde, wird überprüft ob Zeilen aufgefüllt wurden.
+Sollte dies der Fall sein werden die entsprechenden Minos aus dem Array entfernt
+und die Anzahl der vorhandenen Minos wird dekrementiert.
+Die Anzahl der bereits gelöschten Zeilen wird gespeichert.
+
+=== Punkte Berechnung
+Die Punkte werden nach einer relativ einfachen Formel berechnet,
+dafür wird nur die Anzahl der gelöschten Reihen benötigt,
+die bei der Platzierung gelöscht wurden. Der Score wird dann einfach aufaddiert.
+
+.Berechnung der Punkte
+[latexmath]
+++++
+points(deleted\_rows)\coloneqq
+\begin{cases}
+    1200, & \text{if }\; deleted\_rows = 4 \land \text{continuous tetris}\\
+    800,  & \text{if }\; deleted\_rows = 4\\
+    100\cdot deleted\_rows & \text{otherwise}
+\end{cases}
+++++
+
+=== Austauschen eines Blocks
+In Tetris kann ein Block zwischen gespeichert werden,
+wenn ein Block ausgetauscht wird,
+verschwindet dieser vom Spielfeld und wird seitlich angezeigt.
+Die Rotation und die Position wird nicht übernommen.
+Der Block wird dann durch einen bereits gespeicherten Block ersetzt,
+oder ein ganz neuer Block spawnt.
+
+.Gespeicherter I-Block
+image::{imgdir}/saved_block.png[Gespeicherter Block]
+
+=== Game Over
+Sollte kein Block mehr platzierbar sein, ist das Spiel vorbei
+und ein neues wird gestartet,
+d.h. alle Statistiken, wie Punkte oder Level werden zurückgesetzt.
+Auch das Spielfeld wird zurückgesetzt.
+

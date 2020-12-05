@@ -14,7 +14,7 @@
 
 #define WIDTH  400
 #define HEIGHT ((WIDTH * GB_ROWS) / GB_COLS)
-#define TIMER_INTERVAL 0.5
+#define TIMER_INTERVAL 1.0
 
 static void window_initialized(GLFWwindow *window);
 
