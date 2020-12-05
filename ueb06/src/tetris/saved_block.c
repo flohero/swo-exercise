@@ -3,7 +3,7 @@
 //
 
 #include <stdbool.h>
-#include "sb_saved_block.h"
+#include "saved_block.h"
 #include "model/block.h"
 #include "game_board.h"
 

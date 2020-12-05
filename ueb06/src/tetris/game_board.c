@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include "game_board.h"
-#include "sb_saved_block.h"
+#include "saved_block.h"
 #include "render.h"
 
 #define MAX_BLOCKS_COUNT ((GB_ROWS)*(GB_COLS))

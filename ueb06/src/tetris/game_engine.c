@@ -4,7 +4,7 @@
 #include "current_block.h"
 #include "game_board.h"
 #include "timer.h"
-#include "sb_saved_block.h"
+#include "saved_block.h"
 
 static bool game_over = false;
 static int points = 0;
