@@ -8,7 +8,7 @@
 #include "utils.h"
 
 extern void memory_error(bool condition, const char *func, const int line) {
-  if(!condition) {
+  if (!condition) {
     return;
   }
   printf("Out of memory in %s near line %d", func, line);

@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <assert.h>
 #include "game_board.h"
+#include "sb_saved_block.h"
+#include "render.h"
 
 #define MAX_BLOCKS_COUNT ((GB_ROWS)*(GB_COLS))
 
@@ -42,6 +44,11 @@ extern void gb_add_block(const block block) {
 }
 
 extern void gb_render(void) {
+  for(int i = 0; i < GB_ROWS; i++) {
+    position pos = {.x = GB_COLS, .y = i};
+    render_quad(pos, color_white);
+  }
+  sb_render_saved_block();
   for (size_t i = 0; i < tetrimino_counter; i++) {
     render_tetrimino(tetriminos[i]);
   }

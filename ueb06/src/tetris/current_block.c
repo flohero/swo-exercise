@@ -37,5 +37,9 @@ extern block cb_get_block(void) {
   return current;
 }
 
+extern void cb_set_block(block block) {
+  current = block;
+}
+
 
 

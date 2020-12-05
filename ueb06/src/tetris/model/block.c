@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "block.h"
 #include "../game_board.h"
+#include "../render.h"
 
 static position get_pos_of_i_block(block block, int index);
 
@@ -13,8 +14,6 @@ static position get_pos_of_o_block(block block, int index);
 static position get_pos_sz_block(block block, int index);
 
 static position get_pos_of_t_block(block block, int index);
-
-static void render_quad(position pos, color color);
 
 static position matrix_rotation(position pos, degrees_of_90 rotate_to);
 
@@ -71,19 +70,6 @@ block new_block() {
       current.position_func = get_pos_sz_block;
   }
   return current;
-}
-
-static void render_quad(const position pos, const color color) {
-  static_assert(sizeof(color) == 4, "detected unexpected size for colors");
-
-  glColor3ubv((unsigned char *) &color);
-
-  glBegin(GL_QUADS);
-  glVertex2i(pos.x, pos.y);
-  glVertex2i(pos.x, pos.y + 1);
-  glVertex2i(pos.x + 1, pos.y + 1);
-  glVertex2i(pos.x + 1, pos.y);
-  glEnd();
 }
 
 static position get_pos_of_i_block(const block block, const int index) {

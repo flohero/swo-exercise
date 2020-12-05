@@ -2,10 +2,12 @@
 #define GAME_BOARD_H
 
 #include <stdbool.h>
+#include <GLFW/glfw3.h>
 #include "model/block.h"
 
 #define GB_ROWS 22
 #define GB_COLS 11
+#define GB_SIDE_WIDTH 4
 
 extern bool gb_is_valid_position(block block);
 
@@ -18,5 +20,4 @@ extern void gb_reset(void);
 extern int gb_delete_lines(void);
 
 extern int get_level(void);
-
 #endif

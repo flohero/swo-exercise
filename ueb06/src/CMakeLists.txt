@@ -20,30 +20,30 @@ set(CMAKE_CXX_EXTENSIONS OFF)       # disable compiler specific extensions
 
 # helper function to simplify definition of projects
 function(target name)
-	file(GLOB_RECURSE SRC "${name}/*")   # recursively collect all files in sub-folder for project
-	add_executable(${name} ${SRC})       # define project "name" based on files found in SRC
+    file(GLOB_RECURSE SRC "${name}/*")   # recursively collect all files in sub-folder for project
+    add_executable(${name} ${SRC})       # define project "name" based on files found in SRC
 
-	#set required warning flags
-	if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU"   OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
-	   "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-		target_compile_options(${name} PRIVATE
-			-Wall        # enable "all" warnings
-			-Wextra      # enable extra warnings
-			-Wpedantic   # enable strict conformance warnings
-			-Wconversion # enable warnings for dangerous implicit conversions
-			-Werror=vla  # disable support for VLAs
-		)
-  #target_link_libraries(${name} PRIVATE m)
-	elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-		target_compile_options(${name} PRIVATE
-			/W4          # enable almost all "necessary" warnings
-			/permissive- # enforce strict standard compliance
-			/JMC         # optimize debugging experience
-			/MP          # enable parallel compilation
-		)
-	else()
-		message(WARNING "unknown compiler, no warning flags set!")
-	endif()
+    #set required warning flags
+    if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+            "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        target_compile_options(${name} PRIVATE
+                -Wall        # enable "all" warnings
+                -Wextra      # enable extra warnings
+                -Wpedantic   # enable strict conformance warnings
+                -Wconversion # enable warnings for dangerous implicit conversions
+                -Werror=vla  # disable support for VLAs
+                )
+        #target_link_libraries(${name} PRIVATE m)
+    elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        target_compile_options(${name} PRIVATE
+                /W4          # enable almost all "necessary" warnings
+                /permissive- # enforce strict standard compliance
+                /JMC         # optimize debugging experience
+                /MP          # enable parallel compilation
+                )
+    else ()
+        message(WARNING "unknown compiler, no warning flags set!")
+    endif ()
 endfunction()
 
 target(tetris)
@@ -51,4 +51,5 @@ target(tetris)
 # find and link dependencies
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
-target_link_libraries(tetris glfw OpenGL::GL OpenGL::GLU)
+find_package(portaudio CONFIG REQUIRED)
+target_link_libraries(tetris glfw OpenGL::GL OpenGL::GLU portaudio_static)

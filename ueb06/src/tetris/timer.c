@@ -36,6 +36,10 @@ extern void timer_stop(void) {
   timer_running = false;
 }
 
+extern void timer_resume(void) {
+  timer_running = true;
+}
+
 static void reset_time(void) {
   glfwSetTime(0.0);
 }
