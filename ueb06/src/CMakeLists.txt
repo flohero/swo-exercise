@@ -33,6 +33,7 @@ function(target name)
                 -Wconversion # enable warnings for dangerous implicit conversions
                 -Werror=vla  # disable support for VLAs
                 )
+        # I have no idea why this was added here
         #target_link_libraries(${name} PRIVATE m)
     elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         target_compile_options(${name} PRIVATE
@@ -51,5 +52,4 @@ target(tetris)
 # find and link dependencies
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(portaudio CONFIG REQUIRED)
-target_link_libraries(tetris glfw OpenGL::GL OpenGL::GLU portaudio_static)
+target_link_libraries(tetris glfw OpenGL::GL OpenGL::GLU)
