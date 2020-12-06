@@ -33,7 +33,8 @@ extern void timer_fire(void) {
   if (!timer_running) {
     return;
   }
-  int res = STANDARD_PACE - get_level() > 1 ? STANDARD_PACE - get_level() : 1;
+  int new_pace = STANDARD_PACE - (get_level() * 5);
+  int res = new_pace > 1 ? new_pace : 1;
   if (glfwGetTime() >= (interval / FRAMES_PER_SECOND) * res) {
     callback();
     reset_time();

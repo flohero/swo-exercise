@@ -6,7 +6,7 @@
 #include "timer.h"
 #include "saved_block.h"
 
-#define LEVEL_FACTOR 10
+#define LEVEL_FACTOR 5
 
 #define POINTS_PER_ROW 100
 

@@ -100,7 +100,7 @@ Um das momentane Level zu berechnen:
 [latexmath]
 ++++
 current\_level(count\_deleted\_rows)\coloneqq
-int\left(\frac{count\_deleted\_rows}{10}\right)
+int\left(\frac{count\_deleted\_rows}{5}\right)
 ++++
 
 === Rotieren des momentanten Blocks
