@@ -10,10 +10,9 @@
 static block saved_block;
 static bool saved = false;
 
-extern bool sb_is_saved(void) {
-  return saved;
-}
-
+/**
+ * Render the currently saved block
+ */
 extern void sb_render_saved_block(void) {
   if (saved) {
     render_block(saved_block);
@@ -35,6 +34,9 @@ extern block sb_switch_saved_block(block b) {
   return old_block;
 }
 
+/**
+ * Delete the currently saved block
+ */
 extern void sb_delete_saved_block(void) {
   saved = false;
 }

@@ -10,6 +10,11 @@ static bool timer_running = false;
 
 static void reset_time(void);
 
+/**
+ * Start the timer
+ * @param itvl timer interval
+ * @param on_tick callback function
+ */
 extern void timer_start(double itvl, timer_func on_tick) {
   assert(on_tick != NULL);
   assert(itvl > 0);
@@ -21,6 +26,9 @@ extern void timer_start(double itvl, timer_func on_tick) {
   reset_time();
 }
 
+/**
+ * Run the callback function, if the interval is correct
+ */
 extern void timer_fire(void) {
   if (!timer_running) {
     return;
@@ -32,14 +40,23 @@ extern void timer_fire(void) {
   }
 }
 
+/**
+ * Pause timer
+ */
 extern void timer_stop(void) {
   timer_running = false;
 }
 
+/**
+ * Resume Timer
+ */
 extern void timer_resume(void) {
   timer_running = true;
 }
 
+/**
+ * reset timer to zero
+ */
 static void reset_time(void) {
   glfwSetTime(0.0);
 }

@@ -7,7 +7,11 @@
 #include "model/block_types.h"
 #include "game_board.h"
 
-
+/**
+ * Render a single quad at pos with color
+ * @param pos were should it be rendered
+ * @param color which color to render
+ */
 extern void render_quad(const position pos, const color color) {
   static_assert(sizeof(color) == 4, "detected unexpected size for colors");
 

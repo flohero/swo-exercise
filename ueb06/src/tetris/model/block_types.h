@@ -48,9 +48,9 @@ typedef struct {
   color color;
 } mino;
 
-degrees_of_90 add(degrees_of_90 left, degrees_of_90 right);
+extern degrees_of_90 add(degrees_of_90 left, degrees_of_90 right);
 
-block_type random_block_type(void);
+extern block_type random_block_type(void);
 
 extern void render_mino(mino m);
 

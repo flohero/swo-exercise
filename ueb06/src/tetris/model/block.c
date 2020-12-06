@@ -19,16 +19,28 @@ static position matrix_rotation(position pos, degrees_of_90 rotate_to);
 
 static position change_block_position_by(position block_pos, position normalized_pos);
 
-void render_block(const block block) {
+/**
+ * Render a block with its specified color
+ * Optionally print the anchor point of the block
+ */
+extern void render_block(const block block) {
   for (int i = 0; i < MINOS_PER_BLOCK; i++) {
     position pos = block.position_func(block, i);
     render_quad(pos, block.color);
   }
   //Render anchor of Block
-  //render_quad(block.pos, color_white  );
+  // For debugging purposes
+#ifdef SHOW_ANCHOR
+  render_quad(block.pos, color_white  );
+#endif
 }
 
-block new_block() {
+/**
+ * Generate a new block with standard starting position and orientation
+ * The type of the block is random, but its color is defined by the type of the block
+ * @returns a new block
+ */
+extern block new_block() {
   block current;
   current.pos.x = GB_COLS / 2;
   current.pos.y = GB_ROWS - 1;
@@ -70,12 +82,26 @@ block new_block() {
   return current;
 }
 
+/**
+ * Calculate the position of a block,
+ * at an index
+ * @param block
+ * @param index which mino should be calculated
+ * @returns the position for an index
+ */
 static position get_pos_of_i_block(const block block, const int index) {
   position pos = {.x = 0, .y = index};
   pos = matrix_rotation(pos, block.orientation);
   return change_block_position_by(block.pos, pos);
 }
 
+/**
+ * Calculate the position of a block,
+ * at an index
+ * @param block
+ * @param index which mino should be calculated
+ * @returns the position for an index
+ */
 static position get_pos_of_jl_block(const block block, const int index) {
   bool is_j = block.type == j_block;
   position pos;
@@ -90,12 +116,26 @@ static position get_pos_of_jl_block(const block block, const int index) {
   return change_block_position_by(block.pos, pos);
 }
 
+/**
+ * Calculate the position of a block,
+ * at an index
+ * @param block
+ * @param index which mino should be calculated
+ * @returns the position for an index
+ */
 static position get_pos_of_o_block(const block block, const int index) {
   position pos = {.x = index % 2, .y = index / 2};
   pos = matrix_rotation(pos, block.orientation);
   return change_block_position_by(block.pos, pos);
 }
 
+/**
+ * Calculate the position of a block,
+ * at an index
+ * @param block
+ * @param index which mino should be calculated
+ * @returns the position for an index
+ */
 static position get_pos_sz_block(const block block, const int index) {
   bool is_s = block.type == s_block;
   int inc1 = is_s ? 0 : 1;
@@ -108,6 +148,13 @@ static position get_pos_sz_block(const block block, const int index) {
   return change_block_position_by(block.pos, pos);
 }
 
+/**
+ * Calculate the position of a block,
+ * at an index
+ * @param block
+ * @param index which mino should be calculated
+ * @returns the position for an index
+ */
 static position get_pos_of_t_block(const block block, const int index) {
   position pos;
   if (index == MINOS_PER_BLOCK - 1) {
@@ -121,17 +168,27 @@ static position get_pos_of_t_block(const block block, const int index) {
   return change_block_position_by(block.pos, pos);
 }
 
+/**
+ * Rotate the position by rotate_to
+ * @returns the rotated position
+ */
 static position matrix_rotation(position pos, const degrees_of_90 rotate_to) {
   for (int i = 0; i < (rotate_to / d90); i++) {
     int old_x = pos.x;
-    pos.x = pos.y;
-    pos.y = -1 * old_x;
+    pos.x = -1 * pos.y;
+    pos.y = old_x;
   }
   return pos;
 }
 
+/**
+ * Change the position by another position
+ * @returns a new position
+ */
 static position change_block_position_by(position block_pos, const position normalized_pos) {
   block_pos.x = block_pos.x + normalized_pos.x;
+  // Since the anchor point is at the top left of a block
+  // the y-axis needs to be subtracted
   block_pos.y = block_pos.y - normalized_pos.y;
   return block_pos;
 }

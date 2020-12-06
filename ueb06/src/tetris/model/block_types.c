@@ -3,19 +3,22 @@
 //
 
 #include "../render.h"
-#include "../game_board.h"
-#include "block.h"
-#include <stdio.h>
-#include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include "block_types.h"
 
-
-degrees_of_90 add(degrees_of_90 left, degrees_of_90 right) {
+/**
+ * Add to degrees together,
+ * if it is over 360° or under 0° it will loop back
+ * @returns between 0° and exclusive 360°
+ */
+extern degrees_of_90 add(degrees_of_90 left, degrees_of_90 right) {
   return (left + right + d360) % d360;
 }
 
-block_type random_block_type(void) {
+/**
+ * @returns a random block_type
+ */
+extern block_type random_block_type(void) {
   static block_type types[] = {
       i_block,
       j_block,
@@ -29,6 +32,9 @@ block_type random_block_type(void) {
   return types[rand() % n_types];
 }
 
-void render_mino(mino m) {
+/**
+ * Render a mino
+ */
+extern void render_mino(mino m) {
   render_quad(m.pos, m.color);
 }

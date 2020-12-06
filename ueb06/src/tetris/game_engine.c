@@ -29,6 +29,13 @@ static void pause(void);
 
 static void print_stats(void);
 
+/**
+ * Handle a potential move of the current block
+ * @param dx
+ * @param dy
+ * @param deg
+ * @return if the move would be successful
+ */
 extern bool ge_handle_move(int dx, int dy, degrees_of_90 deg) {
   if (game_over) {
     return false;
@@ -113,11 +120,11 @@ extern void ge_on_key(GLFWwindow *window, int key, int scancode, int action, int
       break;
       // Rotate block counterclockwise
     case GLFW_KEY_Q:
-      deg = d90;
+      deg = d90neg;
       break;
       // Rotate block clockwise
     case GLFW_KEY_E:
-      deg = d90neg;
+      deg = d90;
       break;
       // Save current block
     case GLFW_KEY_C:
@@ -154,6 +161,10 @@ extern void ge_on_key(GLFWwindow *window, int key, int scancode, int action, int
   }
 }
 
+/**
+ * Calculate the score
+ * @param rows how many rows were deleted
+ */
 static void calculate_points(int rows) {
   points += rows == MINOS_PER_BLOCK
             ? (is_tetris ? POINTS_PER_CONTINOUS_TETRIS : POINTS_PER_TETRIS)
@@ -161,10 +172,17 @@ static void calculate_points(int rows) {
   is_tetris = rows == MINOS_PER_BLOCK;
 }
 
+/**
+ * Calculate the current level
+ * @returns the current level
+ */
 static int calculate_level(void) {
   return lines_cleared / LEVEL_FACTOR;
 }
 
+/**
+ * Pauses the game or unpauses it
+ */
 static void pause(void) {
   if (paused) {
     timer_resume();
@@ -174,6 +192,9 @@ static void pause(void) {
   paused = !paused;
 }
 
+/**
+ * Print stats
+ */
 static void print_stats(void) {
   printf("Points: %d\n", points);
   printf("Level: %d\n", calculate_level());

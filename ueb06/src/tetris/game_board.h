@@ -20,4 +20,5 @@ extern void gb_reset(void);
 extern int gb_delete_lines(void);
 
 extern int get_level(void);
+
 #endif
