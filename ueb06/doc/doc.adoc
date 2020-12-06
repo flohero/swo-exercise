@@ -266,3 +266,92 @@ include::{sourcedir}/tetris/timer.h[]
 include::{sourcedir}/tetris/timer.c[]
 ----
 
+.render.h
+[source,c]
+----
+include::{sourcedir}/tetris/render.h[]
+----
+
+.render.c
+[source,c]
+----
+include::{sourcedir}/tetris/render.c[]
+----
+
+.block.h
+[source,c]
+----
+include::{sourcedir}/tetris/model/block.h[]
+----
+
+.block.c
+[source,c]
+----
+include::{sourcedir}/tetris/model/block.c[]
+----
+
+.block_types.h
+[source,c]
+----
+include::{sourcedir}/tetris/model/block_types.h[]
+----
+
+.block_types.c
+[source,c]
+----
+include::{sourcedir}/tetris/model/block_types.c[]
+----
+
+== Test-Cases
+Hier ein Video der Test Cases: https://filebox.fhooecloud.at/index.php/s/i2CCJ5kGgKbtpHz[Link]
+
+<<<
+=== Block platzieren
+
+.Platzierter L-Block
+image::{imgdir}/place_block.png[Platzierter L-Block]
+
+<<<
+=== Block speichern
+.Gespeicherter S-Block
+image::{imgdir}/place_block.png[Gespeicherter S-Block]
+
+<<<
+=== Block austauschen
+.Gespeicherten Block austauschen
+image::{imgdir}/switched_block.png[Gespeicherten Block austauschen]
+
+<<<
+=== Block Drehen
+Der S-Block kann nur einmal um 90° gedreht werden.
+
+.Nicht gedrehter Block
+image::{imgdir}/s_d0.png[Nicht gedrehter Block]
+
+.90° gegen den Uhrzeigersinn
+image::{imgdir}/s_d90.png[90° gedrehter Block]
+
+Hier der T-Block:
+
+.T-Block 0°
+image::{imgdir}/t_d0.png[T-Block 0°]
+
+.T-Block 90°
+image::{imgdir}/t_d90.png[T-Block 90°]
+
+.T-Block 180°
+image::{imgdir}/t_d180.png[T-Block 180°]
+
+.T-Block 270°
+image::{imgdir}/t_d270.png[T-Block 270°]
+
+<<<
+=== Zeile Löschen
+Hier wurde auch ein Hard-Drop durchgeführt,
+auch wenn man das auf einem Bild nicht erkennen kann.
+
+.Kurz vor dem Löschen
+image::{imgdir}/pre_delete.png[Vor dem Löschen]
+
+.Nach dem Löschen
+image::{imgdir}/post_delete.png[Nach dem Löschen]
