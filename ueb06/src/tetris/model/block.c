@@ -24,6 +24,8 @@ void render_block(const block block) {
     position pos = block.position_func(block, i);
     render_quad(pos, block.color);
   }
+  //Render anchor of Block
+  //render_quad(block.pos, color_white  );
 }
 
 block new_block() {
