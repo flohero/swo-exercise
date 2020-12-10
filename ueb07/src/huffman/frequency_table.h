@@ -5,19 +5,23 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include "bit_stream.h"
 #include "char_frequency.h"
 
 namespace huffman {
   class frequency_table {
     private:
-    std::map<char, int> frequencies;
-    int total = 0;
+      std::map<char, int> frequencies;
+      size_t total = 0;
+
     public:
-    explicit frequency_table(const std::string &str);
+      explicit frequency_table(const std::string &str);
 
-    void print_frequencies() const;
+      void print_frequencies() const;
 
-    [[nodiscard]] huffman::char_frequency find_pair_at(char key) const;
+      //huffman::char_frequency find_pair_at(char key) const;
+
+      std::set<char_frequency> to_set() const;
   };
 }

@@ -11,13 +11,16 @@
 namespace huffman {
   class char_frequency {
     private:
-    char character;
-    int frequency;
-    int total;
+      char character;
+      int frequency;
+      size_t total;
 
     public:
-    explicit char_frequency(char character, int frequency, int total);
+      char_frequency();
+      explicit char_frequency(char character, int frequency, size_t total);
 
+      char_frequency operator+(const char_frequency &freq) const;
+      bool operator<(const char_frequency &freq) const;
   };
 }
 

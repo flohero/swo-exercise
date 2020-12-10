@@ -1,5 +1,6 @@
 #include "bit_string_stream.h"
 #include "frequency_table.h"
+#include "huffman_tree_node.h"
 
 using namespace huffman;
 

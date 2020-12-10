@@ -38,7 +38,11 @@ namespace huffman {
     }
   }
 
-  char_frequency frequency_table::find_pair_at(const char key) const {
+  std::set<char_frequency> frequency_table::to_set() const {
+    return std::set<char_frequency>();
+  }
+
+  /*char_frequency frequency_table::find_pair_at(const char key) const {
     auto frequency = this->frequencies.find(key);
     if (frequency == this->frequencies.end()) {
       std::string error_msg = "Could not find key ";
@@ -46,5 +50,5 @@ namespace huffman {
       throw std::runtime_error(error_msg);
     }
     return char_frequency(frequency->first, frequency->second, this->total);
-  }
+  }*/
 }
