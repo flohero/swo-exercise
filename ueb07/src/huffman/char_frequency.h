@@ -17,10 +17,14 @@ namespace huffman {
 
     public:
       char_frequency();
+
       explicit char_frequency(char character, int frequency, size_t total);
 
       char_frequency operator+(const char_frequency &freq) const;
+
       bool operator<(const char_frequency &freq) const;
+
+      bool operator>(const char_frequency &freq) const;
   };
 }
 

@@ -19,7 +19,7 @@ namespace huffman {
   huffman_tree_node::huffman_tree_node(char_frequency char_frequency, huffman_tree_node *node1,
                                        huffman_tree_node *node2)
           : huffman_tree_node(char_frequency) {
-    if (node1 < node2) {
+    if (*node1 < *node2) {
       this->left = node1;
       this->right = node2;
     } else {
@@ -55,7 +55,7 @@ namespace huffman {
     return new huffman_tree_node(this->value.operator+(node->value), this, node);
   }
 
-  bool huffman_tree_node::operator<(const huffman_tree_node &node) {
+  bool huffman_tree_node::operator<(const huffman_tree_node &node) const {
     return this->value < node.value;
   }
 }

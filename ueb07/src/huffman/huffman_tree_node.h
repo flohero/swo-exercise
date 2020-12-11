@@ -15,13 +15,19 @@ namespace huffman {
 
     public:
       huffman_tree_node();
+
       explicit huffman_tree_node(char_frequency char_frequency);
+
       explicit huffman_tree_node(char_frequency char_frequency, huffman_tree_node *node1, huffman_tree_node *node2);
+
       ~huffman_tree_node();
 
       huffman_tree_node &operator=(const huffman_tree_node &other);
+
       huffman_tree_node *operator+(huffman_tree_node *node);
-      bool operator<(const huffman_tree_node &node);
+
+      bool operator<(const huffman_tree_node &node) const;
+
   };
 }
 
