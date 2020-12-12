@@ -11,6 +11,9 @@ using std::endl;
 namespace huffman {
   frequency_table::frequency_table(const std::string &str) {
     total = str.length();
+    if(total == 0) {
+      throw std::invalid_argument{"Content was empty"};
+    }
     for (char c: str) {
       auto res = this->frequencies.insert({c, 1});
       if (!res.second
