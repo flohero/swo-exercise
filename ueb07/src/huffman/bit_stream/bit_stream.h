@@ -12,8 +12,9 @@ namespace huffman {
         explicit bit_stream() = default;
         explicit bit_stream(std::string filename);
 
-        virtual std::string content() const = 0;
+        virtual ~bit_stream() = default;
 
+        virtual std::string content() const = 0;
       protected:
         std::string filename;
     };

@@ -13,6 +13,9 @@ namespace huffman {
 
   std::string bit_string_stream::content() const {
     std::ifstream ifs(this->filename, std::ifstream::in);
+    if(!ifs.good()) {
+      throw std::runtime_error("Could not open file: " + this->filename);
+    }
     std::string str;
     for (char c = static_cast<char>(ifs.get()); ifs.good() && c != -1; c = static_cast<char>(ifs.get())) {
       str += c;

@@ -11,6 +11,8 @@ namespace huffman {
       public:
         explicit bit_string_stream(const std::string& filename);
 
+        ~bit_string_stream() override = default;
+
         [[nodiscard]] std::string content() const override;
     };
 }

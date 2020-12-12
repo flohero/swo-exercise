@@ -11,7 +11,7 @@
 namespace huffman {
   class default_stream: public bit_stream {
     public:
-      default_stream(std::string value) {
+      explicit default_stream(std::string value) {
         this->value = std::move(value);
       }
 
