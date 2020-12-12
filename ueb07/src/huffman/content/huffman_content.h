@@ -29,6 +29,8 @@ namespace huffman {
 
     protected:
       coding_token *token = nullptr;
+
+      void statistics() const;
   };
 }
 

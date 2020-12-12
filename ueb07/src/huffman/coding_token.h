@@ -26,6 +26,8 @@ namespace huffman {
       explicit coding_token(bit_stream &bit_stream);
 
       [[nodiscard]] std::map<const char, std::vector<bool>> *coding_map() const;
+
+      void print() const;
   };
 }
 
