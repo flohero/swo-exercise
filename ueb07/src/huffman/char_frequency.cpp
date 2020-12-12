@@ -35,4 +35,8 @@ namespace huffman {
   bool char_frequency::operator>(const char_frequency &freq) const {
     return this->frequency > freq.frequency;
   }
+
+  char char_frequency::get_character() const {
+    return this->character;
+  }
 }

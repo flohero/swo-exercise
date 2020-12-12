@@ -6,6 +6,7 @@
 
 #include <map>
 #include <set>
+#include <vector>
 #include "bit_stream.h"
 #include "char_frequency.h"
 #include "huffman_tree_node.h"
@@ -29,5 +30,7 @@ namespace huffman {
       //huffman::char_frequency find_pair_at(char key) const;
 
       [[nodiscard]] huffman_tree_node *build_tree() const;
+
+      std::vector<char> keys() const;
   };
 }

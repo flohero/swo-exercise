@@ -25,6 +25,8 @@ namespace huffman {
       bool operator<(const char_frequency &freq) const;
 
       bool operator>(const char_frequency &freq) const;
+
+      char get_character() const;
   };
 }
 

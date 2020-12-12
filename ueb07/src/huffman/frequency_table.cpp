@@ -70,6 +70,14 @@ namespace huffman {
     return *freq_set.begin();
   }
 
+  std::vector<char> frequency_table::keys() const {
+    std::vector<char> k;
+    for(auto freq: this->frequencies) {
+      k.push_back(freq.first);
+    }
+    return k;
+  }
+
   /*char_frequency frequency_table::find_pair_at(const char key) const {
     auto frequency = this->frequencies.find(key);
     if (frequency == this->frequencies.end()) {

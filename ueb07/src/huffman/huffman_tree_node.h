@@ -22,6 +22,13 @@ namespace huffman {
 
       ~huffman_tree_node();
 
+      [[nodiscard]] huffman_tree_node * get_left() const;
+
+      [[nodiscard]] huffman_tree_node * get_right() const;
+      char_frequency get_value()const ;
+
+      bool is_empty() const;
+
       huffman_tree_node &operator=(const huffman_tree_node &other);
 
       huffman_tree_node *operator+(huffman_tree_node *node);

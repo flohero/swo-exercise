@@ -58,4 +58,21 @@ namespace huffman {
   bool huffman_tree_node::operator<(const huffman_tree_node &node) const {
     return this->value < node.value;
   }
+
+  huffman_tree_node *huffman_tree_node::get_left() const {
+    return this->left;
+  }
+
+  huffman_tree_node *huffman_tree_node::get_right() const {
+    return this->right;
+  }
+
+  bool huffman_tree_node::is_empty() const {
+    return this->left == nullptr && this->right == nullptr;
+  }
+
+  char_frequency huffman_tree_node::get_value() const {
+    return this->value;
+  }
+
 }
