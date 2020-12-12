@@ -9,9 +9,10 @@
 namespace huffman {
     class bit_stream {
       public:
+        explicit bit_stream() = default;
         explicit bit_stream(std::string filename);
 
-        virtual std::string load_file_content() const = 0;
+        virtual std::string content() const = 0;
 
       protected:
         std::string filename;

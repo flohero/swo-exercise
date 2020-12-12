@@ -8,7 +8,7 @@ namespace huffman {
 
   coding_token::coding_token(bit_stream &bit_stream)
           : stream{bit_stream},
-            freq_table{stream.load_file_content()} {
+            freq_table{stream.content()} {
 
   }
 

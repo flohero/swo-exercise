@@ -7,7 +7,7 @@
 
 #include <string>
 #include <vector>
-#include "bit_stream.h"
+#include "bit_stream/bit_stream.h"
 #include "frequency_table.h"
 
 namespace huffman {

@@ -9,8 +9,8 @@
 using std::string;
 
 namespace huffman {
-    bit_stream::bit_stream(string filename) {
-        this->filename = std::move(filename);
-    }
+  bit_stream::bit_stream(string filename) {
+    this->filename = std::move(filename);
+  }
 }
 

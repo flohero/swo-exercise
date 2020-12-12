@@ -7,7 +7,7 @@
 #include <map>
 #include <set>
 #include <vector>
-#include "bit_stream.h"
+#include "bit_stream/bit_stream.h"
 #include "char_frequency.h"
 #include "huffman_tree_node.h"
 
