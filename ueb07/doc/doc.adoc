@@ -1,0 +1,184 @@
+= Abgabe 07: Huffman
+:author: Florian Weingartshofer
+:email: <S1910307103@students.fh-hagenberg.at>
+:reproducible:
+:experimental:
+:listing-caption: Listing
+:source-highlighter: rouge
+:sourcedir: ../src
+:imgdir: ./img
+:toc:
+:toclevels: 4
+
+<<<
+== Lösungsidee
+
+.Klassen-Diagram, für mehr Lesbarkeit wurden bestimmte Schlüsselwörter, wie `const`, weggelassen
+[plantuml, diagram-classes, png]
+....
+class bit_stream{
+    # string filename
+    + bit_stream(string filename)
+    + \~bit_stream()
+    + {abstract} string content()
+}
+class bit_string_stream {
+    + bit_string_stream(string filename)
+    + \~bit_string_stream()
+    + string content()
+}
+class default_stream {
+    - string value
+    + default_stream(string value)
+    + string content()
+}
+
+class content {
+    # bit_stream *stream
+    + content()
+    + content(string file)
+    + \~content()
+    + {abstract} encode()
+    + {abstract} decode(string encoded)
+}
+class huffman_content {
+    # coding_token *token
+    + huffman_content()
+    + huffman_content(string filename)
+    + \~huffman_content()
+    + string encode()
+    + string decode(string encoded)
+    + void statistics()
+}
+class huffman_default_content {
+    + huffman_default_content(string value)
+}
+
+class bit_code {
+    - vector<bool> bits;
+    + bit_code()
+    + bit_code(vector<bool> bits)
+    + void print()
+    + string to_string()
+}
+
+class char_frequency {
+    - {static} int count
+    - int id = count++
+    - char character
+    - int frequency
+    - size_t total
+    + char_frequency()
+    + char_frequency(char character, int frequency, size_t total)
+    + char_frequency operator+(char_frequency &freq)
+    + bool operator<(char_frequency &freq)
+    + bool operator>(char_frequency &freq)
+    + char get_character()
+    + int get_frequency()
+}
+
+class coding_token {
+    - frequency_table freq_table
+    - huffman_tree_node *build_tree()
+    - void coding_map_rec(map<char, bit_code> &codes,  huffman_tree_node *node,
+                            vector<bool> &bit_vec = vector<bool>{})
+    + coding_token(string &content)
+    + map<char, bit_code> *coding_map()
+    + void print()
+}
+
+class frequency_table {
+    - map<char, int> frequencies
+    - size_t total = 0
+    + frequency_table(string &str)
+    + void print()
+    + huffman_tree_node *build_tree()
+    + vector<char> keys()
+    - set<huffman_tree_node *, huffman_tree_node_comperator> to_set()
+    + {static} delete_huffman_frequency_set(set<huffman_tree_node *, huffman_tree_node_comperator> &set)
+}
+
+class huffman_tree_node {
+    - huffman_tree_node *left
+    - huffman_tree_node *right
+    - char_frequency value
+    + huffman_tree_node()
+    + huffman_tree_node(char_frequency char_frequency)
+    + huffman_tree_node(char_frequency char_frequency,
+                        huffman_tree_node *node1, huffman_tree_node *node2)
+    + \~huffman_tree_node()
+    + huffman_tree_node get_left()
+    + huffman_tree_node get_right()
+    + huffman_tree_node get_value()
+    + bool is_leaf()
+    + huffman_tree_node &operator+(huffman_tree_node *node)
+    + bool operator<(huffman_tree_node &node)
+
+}
+
+bit_stream <|-- bit_string_stream
+bit_stream <|-- default_stream
+
+content <|-- huffman_content
+huffman_content <|-- huffman_default_content
+
+content "1" -- "1" bit_string_stream: erzeugt
+huffman_default_content "1" -- "1" default_stream: erzeugt
+
+huffman_content "1" -- "1" coding_token: erzeugt
+
+coding_token "1" -- "n" bit_code: erzeugt
+coding_token "1" -- "1" frequency_table: erzeugt
+coding_token "1" -- "1" huffman_tree_node: erhält
+
+frequency_table "1" -- "n" huffman_tree_node: erzeugt
+frequency_table "1" -- "n" char_frequency: erzeugt
+huffman_tree_node "1" -- "1" char_frequency: erhält
+....
+
+=== content
+*Aka `text_coder`, allerdings find ich den Namen sehr unpassend, daher `content`*
+
+`content` und die davon abgeleiteten Klassen repräsentieren den Inhalt eines Files.
+Der Inhalt kann kodiert und dekotiert werden.
+`huffman_content` und dessen abgeleiteten Klassen,
+können auch eine Statistik anzeigen.
+
+==== huffman_content
+Erzeugt einen `coding_token`, mithilfe dessen der Inhalt kodiert oder dekodiert werden kann.
+Die `statistics` Methode gibt den kodierten und dekotierten Inhalt aus,
+die Kompressionsrate, die Häufigkeitstabelle und die Kodierungstabelle.
+
+==== huffman_default_content
+Abgeleitet von `huffman_content` erstellt statt einem `bit_string_stream`,
+einen `default_stream` und nutzt dessen Inhalt.
+
+=== bit_stream
+Liest ein File aus und gibt dessen Inhalt zurück.
+
+==== default_stream
+Erhält eine String value, welche einfach als Inhalt zurückgegeben wird.
+
+=== coding_token
+Erzeugt die benötigten Tabellen und den Huffman-Baum.
+
+==== Frequency Table
+Wird in der Klasse `frequency_table` erzeugt.
+
+==== Huffman Baum
+Wird von `frequency_table` erzeugt.
+
+==== Coding table
+Die Coding Table wird direkt in dieser Klasse generiert, da hierfür nicht viele Schritte bnötigt werden.
+Hier für wird der Huffman Baum rekursiv durchlaufen, bis jeder Leaf abgelaufen wurde.
+Der Pfad zu diesem Leaf in eine eigene `map` gespeichert,
+dieser wird durch `0` (linker Knoten) und `1` (rechter Knoten) dargestellt.
+Die `map` ist nach Keys, also den Zeichen sortiert.
+
+=== Frequency Table
+Erzeugt eine `map` aus einem `string`.
+Diese enthält die Häufigkeit eines Zeichens und das Zeichen als Key.
+
+== Test-Cases
+=== Memory-Leaks
+Zum Testen auf Memory Leaks wurde https://valgrind.org[valgrind] verwendet.
