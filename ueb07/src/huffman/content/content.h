@@ -24,8 +24,8 @@ namespace huffman {
         delete this->stream;
       };
 
-      virtual std::string encode() = 0;
-      virtual std::string decode(std::string encoded) = 0;
+      [[nodiscard]] virtual std::string encode() const = 0;
+      [[nodiscard]] virtual std::string decode(std::string encoded) const = 0;
 
     protected:
       bit_stream *stream = nullptr;

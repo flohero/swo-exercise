@@ -71,5 +71,12 @@ namespace huffman {
       cout << " | " << static_cast<double >(frequency->get_value().get_frequency()) * 100 /
                        static_cast<double>(this->total) << "%" << endl;
     }
+    delete_huffman_frequency_set(set);
+  }
+
+  void frequency_table::delete_huffman_frequency_set(const std::set<huffman_tree_node *, frequency_table::comp>& set) {
+    for(auto it: set) {
+      delete it;
+    }
   }
 }

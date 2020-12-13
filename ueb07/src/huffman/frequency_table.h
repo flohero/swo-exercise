@@ -17,6 +17,8 @@ namespace huffman {
       std::map<char, int> frequencies;
       size_t total = 0;
 
+
+    public:
       /**
        * Comparator function for two huffman_tree_nodes
        */
@@ -26,17 +28,17 @@ namespace huffman {
         }
       };
 
-
-    public:
       explicit frequency_table(const std::string &str);
 
       void print() const;
 
       [[nodiscard]] huffman_tree_node *build_tree() const;
 
-      std::vector<char> keys() const;
+      [[nodiscard]] std::vector<char> keys() const;
 
       [[nodiscard]] std::set<huffman_tree_node *, comp> to_set() const;
 
+
+      static void delete_huffman_frequency_set(const std::set<huffman_tree_node *, frequency_table::comp> &set);
   };
 }

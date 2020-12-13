@@ -60,12 +60,14 @@ namespace huffman {
 
     std::cout << "Coding Table" << std::endl
     << "------------" << std::endl;
-    for(const auto& it: this->freq_table.to_set()) {
+    auto freq_set = this->freq_table.to_set();
+    for(const auto& it: freq_set) {
       auto codes = coding_map->find(it->get_value().get_character());
       std::cout << codes->first << " | ";
       codes->second.print();
       std::cout << std::endl;
     }
+    frequency_table::delete_huffman_frequency_set(freq_set);
     delete coding_map;
   }
 }

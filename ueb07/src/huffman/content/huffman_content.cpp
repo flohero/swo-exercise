@@ -17,7 +17,7 @@ namespace huffman {
     delete this->token;
   }
 
-  std::string huffman_content::encode() {
+  std::string huffman_content::encode() const {
     std::string encoded;
     auto coding_map = this->token->coding_map();
     for (char c: this->stream->content()) {
@@ -25,16 +25,36 @@ namespace huffman {
       encoded += val->second.to_string();
     }
     delete coding_map;
-    statistics(encoded);
     return encoded;
   }
 
-  std::string huffman_content::decode(std::string encoded) {
-
-    return "";
+  std::string huffman_content::decode(std::string encoded) const {
+    std::string decoded;
+    auto coding_map = this->token->coding_map();
+    while(encoded.length() != 0) {
+      bool match = false;
+      for(const auto& it: *coding_map) {
+        const std::string &bit_code_str = it.second.to_string();
+        if(encoded.rfind(bit_code_str, 0) == 0) {
+          match = true;
+          encoded = encoded.substr(bit_code_str.length());
+          decoded += it.first;
+        }
+      }
+      if(!match) {
+        throw std::runtime_error("No matching code was found");
+      }
+    }
+    delete coding_map;
+    return decoded;
   }
 
-  void huffman_content::statistics(const std::string &codes) const {
+  void huffman_content::statistics() const {
+    std::string codes = encode();
+    std::string str = decode(codes);
+    if(str != stream->content()) {
+      throw std::runtime_error("Error when calculating huffman code");
+    }
     this->token->print();
     std::cout << std::endl;
     auto code_size = static_cast<double>(codes.length());
@@ -45,6 +65,8 @@ namespace huffman {
               << "Original Size    : " << input_size        << " bits" << std::endl
               << "Size Now         : " << code_size         << " bits" << std::endl
               << "Compression Rate : " << compression_rate  << "%"     << std::endl
-              << std::endl;
+              << std::endl
+              << codes << std::endl
+              << str;
   }
 }
