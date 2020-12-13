@@ -24,7 +24,14 @@ namespace huffman {
     for (auto key: this->freq_table.keys()) {
       coding_map->insert({key, bit_code{}});
     }
-    this->coding_map_rec(*coding_map, tree);
+    // If the tree is from the beginning empty, just return a null vector.
+    if(tree->is_empty()) {
+      std::vector<bool> null_vec{};
+      null_vec.push_back(false);
+      coding_map->begin()->second = bit_code{null_vec};
+    } else {
+      this->coding_map_rec(*coding_map, tree);
+    }
     delete tree;
     return coding_map;
   }

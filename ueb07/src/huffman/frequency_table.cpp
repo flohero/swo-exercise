@@ -11,7 +11,7 @@ using std::endl;
 namespace huffman {
   frequency_table::frequency_table(const std::string &str) {
     total = str.length();
-    if(total == 0) {
+    if (total == 0) {
       throw std::invalid_argument{"Content was empty"};
     }
     for (char c: str) {
@@ -23,18 +23,18 @@ namespace huffman {
     }
   }
 
-  std::set<huffman_tree_node*, frequency_table::comp> frequency_table::to_set() const {
-    std::set<huffman_tree_node*, comp> freq_set;
-    for(auto frequency : this->frequencies) {
+  std::set<huffman_tree_node *, frequency_table::comp> frequency_table::to_set() const {
+    std::set<huffman_tree_node *, comp> freq_set;
+    for (auto frequency : this->frequencies) {
       auto *node = new huffman_tree_node{char_frequency{frequency.first, frequency.second, this->total}};
       freq_set.insert(node);
     }
     return freq_set;
   }
 
-  huffman_tree_node* frequency_table::build_tree() const {
+  huffman_tree_node *frequency_table::build_tree() const {
     auto freq_set = this->to_set();
-    while(freq_set.size() > 1) {
+    while (freq_set.size() > 1) {
       huffman_tree_node *first = *freq_set.begin();
       huffman_tree_node *second = *std::next(freq_set.begin(), 1);
       huffman_tree_node *node = *first + second;
@@ -47,7 +47,7 @@ namespace huffman {
 
   std::vector<char> frequency_table::keys() const {
     std::vector<char> k;
-    for(auto freq: this->frequencies) {
+    for (auto freq: this->frequencies) {
       k.push_back(freq.first);
     }
     return k;

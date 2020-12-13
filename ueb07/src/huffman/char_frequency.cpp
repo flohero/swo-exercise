@@ -5,6 +5,7 @@
 #include "char_frequency.h"
 
 namespace huffman {
+  int char_frequency::count = 0;
 
   char_frequency::char_frequency() {
     this->total = 0;
@@ -29,11 +30,16 @@ namespace huffman {
   }
 
   bool char_frequency::operator<(const char_frequency &freq) const {
-    return this->frequency < freq.frequency;
+    return this->frequency != freq.frequency
+           ? this->frequency < freq.frequency
+           : (this->character != freq.character
+              ? this->character < freq.character
+              // If the nodes are identical, just compare the ids.
+              : this->id < freq.id);
   }
 
   bool char_frequency::operator>(const char_frequency &freq) const {
-    return this->frequency > freq.frequency;
+    return !(*this < freq);
   }
 
   char char_frequency::get_character() const {
