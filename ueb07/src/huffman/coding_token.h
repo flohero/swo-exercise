@@ -14,21 +14,22 @@
 namespace huffman {
   class coding_token {
     private:
-      bit_stream &stream;
       frequency_table freq_table;
 
       [[nodiscard]] huffman_tree_node *build_tree() const;
 
       void coding_map_rec(std::map<const char, bit_code> &codes,
                           const huffman_tree_node *node,
-                          const std::vector<bool>& = std::vector<bool>{}) const;
+                          const std::vector<bool> &bit_vec = std::vector<bool>{}) const;
 
     public:
-      explicit coding_token(bit_stream &bit_stream);
+      explicit coding_token(const std::string& content);
 
-      [[nodiscard]] std::map<const char, bit_code> * coding_map() const;
+      [[nodiscard]] std::map<const char, bit_code> *coding_map() const;
 
       void print() const;
+
+
   };
 }
 

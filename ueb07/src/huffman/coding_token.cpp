@@ -8,24 +8,21 @@
 
 namespace huffman {
 
-  coding_token::coding_token(bit_stream &bit_stream)
-          : stream{bit_stream},
-            freq_table{stream.content()} {
-
-  }
+  coding_token::coding_token(const std::string& content) :
+          freq_table{content} {}
 
   huffman_tree_node *coding_token::build_tree() const {
     return this->freq_table.build_tree();
   }
 
-  std::map<const char,bit_code> *coding_token::coding_map() const {
+  std::map<const char, bit_code> *coding_token::coding_map() const {
     auto tree = this->build_tree();
     auto coding_map = new std::map<const char, bit_code>;
     for (auto key: this->freq_table.keys()) {
       coding_map->insert({key, bit_code{}});
     }
     // If the tree is from the beginning empty, just return a null vector.
-    if(tree->is_empty()) {
+    if (tree->is_leaf()) {
       std::vector<bool> null_vec{};
       null_vec.push_back(false);
       coding_map->begin()->second = bit_code{null_vec};
@@ -38,9 +35,9 @@ namespace huffman {
 
   void coding_token::coding_map_rec(std::map<const char, bit_code> &codes,
                                     const huffman_tree_node *node,
-                                    const std::vector<bool>& bit_vec) const {
+                                    const std::vector<bool> &bit_vec) const {
     char_frequency freq = node->get_value();
-    if(node->is_empty()) {
+    if (node->is_leaf()) {
       auto item = codes.find(freq.get_character());
       item->second = bit_code{bit_vec};
       return;
@@ -59,15 +56,14 @@ namespace huffman {
     auto coding_map = this->coding_map();
 
     std::cout << "Coding Table" << std::endl
-    << "------------" << std::endl;
-    auto freq_set = this->freq_table.to_set();
-    for(const auto& it: freq_set) {
-      auto codes = coding_map->find(it->get_value().get_character());
+              << "------------" << std::endl;
+    auto keys = this->freq_table.keys();
+    for (const auto &it: keys) {
+      auto codes = coding_map->find(it);
       std::cout << codes->first << " | ";
       codes->second.print();
       std::cout << std::endl;
     }
-    frequency_table::delete_huffman_frequency_set(freq_set);
     delete coding_map;
   }
 }

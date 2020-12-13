@@ -7,27 +7,28 @@
 #include <map>
 #include <set>
 #include <vector>
-#include "bit_stream/bit_stream.h"
 #include "char_frequency.h"
 #include "huffman_tree_node.h"
 
 namespace huffman {
   class frequency_table {
     private:
-      std::map<char, int> frequencies;
-      size_t total = 0;
-
-
-    public:
       /**
        * Comparator function for two huffman_tree_nodes
        */
-      struct comp {
+      struct huffman_tree_node_comperator {
         bool operator()(huffman_tree_node *l, const huffman_tree_node *r) const {
           return *l < *r;
         }
       };
 
+      std::map<char, int> frequencies;
+      size_t total = 0;
+
+      [[nodiscard]] std::set<huffman_tree_node *, huffman_tree_node_comperator> to_set() const;
+
+
+    public:
       explicit frequency_table(const std::string &str);
 
       void print() const;
@@ -36,9 +37,7 @@ namespace huffman {
 
       [[nodiscard]] std::vector<char> keys() const;
 
-      [[nodiscard]] std::set<huffman_tree_node *, comp> to_set() const;
-
-
-      static void delete_huffman_frequency_set(const std::set<huffman_tree_node *, frequency_table::comp> &set);
+      static void delete_huffman_frequency_set(
+              const std::set<huffman_tree_node *, frequency_table::huffman_tree_node_comperator> &set);
   };
 }

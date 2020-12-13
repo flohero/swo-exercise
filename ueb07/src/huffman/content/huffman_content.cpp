@@ -10,7 +10,7 @@
 namespace huffman {
   huffman_content::huffman_content(const std::string &file) :
           content(file) {
-    this->token = new coding_token{*this->stream};
+    this->token = new coding_token{this->stream->content()};
   }
 
   huffman_content::~huffman_content() {

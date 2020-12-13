@@ -13,7 +13,5 @@ namespace huffman {
   class huffman_default_content : public huffman_content {
     public:
       explicit huffman_default_content(std::string value);
-
   };
-
 }

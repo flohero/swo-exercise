@@ -33,17 +33,6 @@ namespace huffman {
     delete this->right;
   }
 
-  huffman_tree_node &huffman_tree_node::operator=(const huffman_tree_node &other) {
-    if (this != &other) {
-      delete this->left;
-      delete this->right;
-      this->value = other.value;
-      this->left = other.left;
-      this->right = other.right;
-    }
-    return *this;
-  }
-
   /**
    * Overload the plus operator to add two trees together:
    * {freq={x, 1}, left=nullptr, right=nullptr} + {freq={y, 2}, left=nullptr, right=nullptr}
@@ -67,7 +56,7 @@ namespace huffman {
     return this->right;
   }
 
-  bool huffman_tree_node::is_empty() const {
+  bool huffman_tree_node::is_leaf() const {
     return this->left == nullptr && this->right == nullptr;
   }
 

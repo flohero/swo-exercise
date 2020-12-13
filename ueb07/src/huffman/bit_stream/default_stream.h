@@ -15,7 +15,7 @@ namespace huffman {
         this->value = std::move(value);
       }
 
-      std::string content() const override {
+      [[nodiscard]] std::string content() const override {
         return this->value;
       }
 

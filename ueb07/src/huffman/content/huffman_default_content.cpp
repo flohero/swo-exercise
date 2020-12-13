@@ -10,6 +10,6 @@
 namespace huffman {
   huffman_default_content::huffman_default_content(std::string value){
     this->stream = new default_stream{std::move(value)};
-    this->token = new coding_token{*stream};
+    this->token = new coding_token{this->stream->content()};
   }
 }
