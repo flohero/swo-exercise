@@ -23,14 +23,15 @@ namespace huffman {
 
       ~huffman_content();
 
-      void encode() override;
+      std::string encode() override;
 
-      void decode() override;
+      std::string decode(std::string encoded) override;
 
     protected:
       coding_token *token = nullptr;
 
-      void statistics() const;
+      void statistics(const std::string& codes) const;
+
   };
 }
 

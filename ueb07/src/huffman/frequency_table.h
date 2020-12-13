@@ -14,23 +14,29 @@
 namespace huffman {
   class frequency_table {
     private:
-      struct comp;
-
       std::map<char, int> frequencies;
       size_t total = 0;
 
+      /**
+       * Comparator function for two huffman_tree_nodes
+       */
+      struct comp {
+        bool operator()(huffman_tree_node *l, const huffman_tree_node *r) const {
+          return *l < *r;
+        }
+      };
 
-      [[nodiscard]] std::set<huffman_tree_node *, comp> to_set() const;
 
     public:
       explicit frequency_table(const std::string &str);
 
-      void print_frequencies() const;
-
-      //huffman::char_frequency find_pair_at(char key) const;
+      void print() const;
 
       [[nodiscard]] huffman_tree_node *build_tree() const;
 
       std::vector<char> keys() const;
+
+      [[nodiscard]] std::set<huffman_tree_node *, comp> to_set() const;
+
   };
 }

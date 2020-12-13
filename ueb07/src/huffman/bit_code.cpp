@@ -8,12 +8,18 @@
 #include <iostream>
 
 namespace huffman {
-  huffman::bit_code::bit_code(std::vector<bool> bits):
-  bits{std::move(bits)}{}
+  huffman::bit_code::bit_code(std::vector<bool> bits) :
+          bits{std::move(bits)} {}
 
   void bit_code::print() const {
+    std::cout << this->to_string();
+  }
+
+  std::string bit_code::to_string() const {
+    std::string code;
     for (auto it: this->bits) {
-      std::cout << (it ? "1" : "0");
+      code += (it ? "1" : "0");
     }
+    return code;
   }
 }

@@ -39,4 +39,8 @@ namespace huffman {
   char char_frequency::get_character() const {
     return this->character;
   }
+
+  int char_frequency::get_frequency() const {
+    return this->frequency;
+  }
 }

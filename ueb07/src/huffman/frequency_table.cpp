@@ -23,34 +23,6 @@ namespace huffman {
     }
   }
 
-  void frequency_table::print_frequencies() const {
-    cout << "Frequency Table" << endl
-         << "---------------" << endl;
-    for (auto frequency : this->frequencies) {
-      switch (frequency.first) {
-        case '\n':
-          cout << "\\n";
-          break;
-        case '\t':
-          cout << "\\t";
-          break;
-        default:
-          cout << " " << frequency.first;
-      }
-      cout << " | " << static_cast<unsigned long>(frequency.second) * 100 / this->total << "%" << endl;
-    }
-  }
-
-  /**
-   * Comparator function for a type T
-   */
-  struct frequency_table::comp {
-    //template<typename T>
-    bool operator()(huffman_tree_node *l, const huffman_tree_node *r) const {
-      return *l < *r;
-    }
-  };
-
   std::set<huffman_tree_node*, frequency_table::comp> frequency_table::to_set() const {
     std::set<huffman_tree_node*, comp> freq_set;
     for(auto frequency : this->frequencies) {
@@ -81,13 +53,23 @@ namespace huffman {
     return k;
   }
 
-  /*char_frequency frequency_table::find_pair_at(const char key) const {
-    auto frequency = this->frequencies.find(key);
-    if (frequency == this->frequencies.end()) {
-      std::string error_msg = "Could not find key ";
-      error_msg += key;
-      throw std::runtime_error(error_msg);
+  void frequency_table::print() const {
+    auto set = this->to_set();
+    cout << "Frequency Table" << endl
+         << "---------------" << endl;
+    for (auto frequency : set) {
+      switch (frequency->get_value().get_character()) {
+        case '\n':
+          cout << "\\n";
+          break;
+        case '\t':
+          cout << "\\t";
+          break;
+        default:
+          cout << " " << frequency->get_value().get_character();
+      }
+      cout << " | " << static_cast<double >(frequency->get_value().get_frequency()) * 100 /
+                       static_cast<double>(this->total) << "%" << endl;
     }
-    return char_frequency(frequency->first, frequency->second, this->total);
-  }*/
+  }
 }
