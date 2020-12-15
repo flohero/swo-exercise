@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "char_frequency.h"
+#include "../char_frequency.h"
 
 namespace huffman {
   class huffman_tree_node {
@@ -21,6 +21,15 @@ namespace huffman {
       explicit huffman_tree_node(char_frequency char_frequency, huffman_tree_node *node1, huffman_tree_node *node2);
 
       ~huffman_tree_node();
+
+      /**
+       * Comparator function for two huffman_tree_nodes
+       */
+      struct comparator {
+        bool operator()(huffman_tree_node *l, const huffman_tree_node *r) const {
+          return *l < *r;
+        }
+      };
 
       [[nodiscard]] huffman_tree_node *get_left() const;
 

@@ -2,6 +2,7 @@
 // Created by florian on 10.12.20.
 //
 
+#include <iostream>
 #include "huffman_tree_node.h"
 
 namespace huffman {

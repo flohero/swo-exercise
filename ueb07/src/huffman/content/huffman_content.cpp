@@ -21,10 +21,9 @@ namespace huffman {
     std::string encoded;
     auto coding_map = this->token->coding_map();
     for (char c: this->stream->content()) {
-      auto val = coding_map->find(c);
+      auto val = coding_map.find(c);
       encoded += val->second.to_string();
     }
-    delete coding_map;
     return encoded;
   }
 
@@ -33,7 +32,7 @@ namespace huffman {
     auto coding_map = this->token->coding_map();
     while(encoded.length() != 0) {
       bool match = false;
-      for(const auto& it: *coding_map) {
+      for(const auto& it: coding_map) {
         const std::string &bit_code_str = it.second.to_string();
         if(encoded.rfind(bit_code_str, 0) == 0) {
           match = true;
@@ -45,7 +44,6 @@ namespace huffman {
         throw std::runtime_error("No matching code was found");
       }
     }
-    delete coding_map;
     return decoded;
   }
 

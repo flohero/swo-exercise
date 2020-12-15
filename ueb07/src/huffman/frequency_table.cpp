@@ -27,26 +27,13 @@ namespace huffman {
    * Convert the Frequency Table to a set
    * @returns a sorted set
    */
-  std::set<huffman_tree_node *, frequency_table::huffman_tree_node_comperator> frequency_table::to_set() const {
-    std::set<huffman_tree_node *, huffman_tree_node_comperator> freq_set;
+  std::set<huffman_tree_node *, huffman_tree_node::comparator> frequency_table::to_set() const {
+    std::set<huffman_tree_node *, huffman_tree_node::comparator> freq_set;
     for (auto frequency : this->frequencies) {
       auto *node = new huffman_tree_node{char_frequency{frequency.first, frequency.second, this->total}};
       freq_set.insert(node);
     }
     return freq_set;
-  }
-
-  huffman_tree_node *frequency_table::build_tree() const {
-    auto freq_set = this->to_set();
-    while (freq_set.size() > 1) {
-      huffman_tree_node *first = *freq_set.begin();
-      huffman_tree_node *second = *std::next(freq_set.begin(), 1);
-      huffman_tree_node *node = *first + second;
-      freq_set.erase(first);
-      freq_set.erase(second);
-      freq_set.insert(node);
-    }
-    return *freq_set.begin();
   }
 
   std::vector<char> frequency_table::keys() const {
@@ -84,7 +71,7 @@ namespace huffman {
    * @param set
    */
   void frequency_table::delete_huffman_frequency_set(
-          const std::set<huffman_tree_node *, frequency_table::huffman_tree_node_comperator> &set) {
+          const std::set<huffman_tree_node *, huffman_tree_node::comparator> &set) {
     for (auto it: set) {
       delete it;
     }

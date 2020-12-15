@@ -1,6 +1,7 @@
 #include "bit_stream/bit_string_stream.h"
 #include "coding_token.h"
 #include "content/huffman_default_content.h"
+#include "huffman_tree/huffman_tree.h"
 
 using namespace huffman;
 
