@@ -8,7 +8,7 @@
 #include <set>
 #include <vector>
 #include "char_frequency.h"
-#include "huffman_tree/huffman_tree_node.h"
+#include "../huffman_tree/huffman_tree_node.h"
 
 namespace huffman {
   class frequency_table {
@@ -22,7 +22,7 @@ namespace huffman {
 
       void print() const;
 
-      [[nodiscard]] std::vector<char> keys() const;
+      [[nodiscard]] std::vector<char> sorted_keys() const;
 
       static void delete_huffman_frequency_set(
               const std::set<huffman_tree_node *, huffman_tree_node::comparator> &set);

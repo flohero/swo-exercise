@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../char_frequency.h"
+#include "../frequencies/char_frequency.h"
 
 namespace huffman {
   class huffman_tree_node {

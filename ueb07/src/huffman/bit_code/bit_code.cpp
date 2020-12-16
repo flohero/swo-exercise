@@ -8,8 +8,9 @@
 #include <iostream>
 
 namespace huffman {
-  huffman::bit_code::bit_code(std::vector<bool> bits) :
-          bits{std::move(bits)} {}
+  bit_code::bit_code(char key, std::vector<bool> bits) :
+          key{key},
+          bits{std::move(bits)}{}
 
   void bit_code::print() const {
     std::cout << this->to_string();
@@ -21,5 +22,9 @@ namespace huffman {
       code += (it ? "1" : "0");
     }
     return code;
+  }
+
+  char bit_code::get_character() const {
+    return this->key;
   }
 }

@@ -36,11 +36,14 @@ namespace huffman {
     return freq_set;
   }
 
-  std::vector<char> frequency_table::keys() const {
+  std::vector<char> frequency_table::sorted_keys() const {
+    auto set = this->to_set();
     std::vector<char> k;
-    for (auto freq: this->frequencies) {
-      k.push_back(freq.first);
+    k.reserve(set.size());
+    for (auto freq: set) {
+      k.push_back(freq->get_value().get_character());
     }
+    delete_huffman_frequency_set(set);
     return k;
   }
 

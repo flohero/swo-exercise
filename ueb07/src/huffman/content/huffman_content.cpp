@@ -19,25 +19,23 @@ namespace huffman {
 
   std::string huffman_content::encode() const {
     std::string encoded;
-    auto coding_map = this->token->coding_map();
     for (char c: this->stream->content()) {
-      auto val = coding_map.find(c);
-      encoded += val->second.to_string();
+      auto val = this->token->char_to_bitcode(c);
+      encoded += val.to_string();
     }
     return encoded;
   }
 
   std::string huffman_content::decode(std::string encoded) const {
     std::string decoded;
-    auto coding_map = this->token->coding_map();
     while(encoded.length() != 0) {
       bool match = false;
-      for(const auto& it: coding_map) {
-        const std::string &bit_code_str = it.second.to_string();
+      for(const auto& it: this->token->codes()) {
+        const std::string &bit_code_str = it.to_string();
         if(encoded.rfind(bit_code_str, 0) == 0) {
           match = true;
           encoded = encoded.substr(bit_code_str.length());
-          decoded += it.first;
+          decoded += it.get_character();
         }
       }
       if(!match) {

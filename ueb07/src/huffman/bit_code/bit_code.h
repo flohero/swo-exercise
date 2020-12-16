@@ -12,14 +12,18 @@ namespace huffman {
     public:
       bit_code() = default;
 
-      explicit bit_code(std::vector<bool> bits);
+      explicit bit_code(char key, std::vector<bool> bits);
 
       void print() const;
 
       [[nodiscard]] std::string to_string() const;
 
-    private:
-      std::vector<bool> bits;
+      [[nodiscard]] char get_character() const;
 
+      bool operator<(bit_code other) const;
+
+    private:
+      char key = '\0';
+      std::vector<bool> bits;
   };
 }
