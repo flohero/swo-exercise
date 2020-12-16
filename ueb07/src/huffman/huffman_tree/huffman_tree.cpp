@@ -28,4 +28,8 @@ namespace huffman {
   huffman_tree_node *huffman_tree::get_root() const  {
     return this->root;
   }
+
+  void huffman_tree::print() const {
+    this->root->print();
+  }
 }

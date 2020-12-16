@@ -52,18 +52,7 @@ namespace huffman {
     cout << "Frequency Table" << endl
          << "---------------" << endl;
     for (auto frequency : set) {
-      switch (frequency->get_value().get_character()) {
-        case '\n':
-          cout << "\\n";
-          break;
-        case '\t':
-          cout << "\\t";
-          break;
-        default:
-          cout << " " << frequency->get_value().get_character();
-      }
-      cout << " | " << static_cast<double >(frequency->get_value().get_frequency()) * 100 /
-                       static_cast<double>(this->total) << "%" << endl;
+      std::cout << frequency->get_value().to_string() << std::endl;
     }
     delete_huffman_frequency_set(set);
   }

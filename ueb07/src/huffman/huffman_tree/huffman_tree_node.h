@@ -43,6 +43,9 @@ namespace huffman {
 
       bool operator<(const huffman_tree_node &node) const;
 
+      void print();
+
+      void print_rec(const std::string &prefix, bool is_left);
   };
 }
 

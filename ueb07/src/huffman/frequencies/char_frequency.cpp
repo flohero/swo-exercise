@@ -2,6 +2,7 @@
 // Created by florian on 09.12.20.
 //
 
+#include <iomanip>
 #include "char_frequency.h"
 
 namespace huffman {
@@ -65,7 +66,31 @@ namespace huffman {
     return this->character;
   }
 
-  int char_frequency::get_frequency() const {
-    return this->frequency;
+  std::string char_frequency::to_string() const {
+    std::stringstream stream;
+    stream << "'";
+    switch (this->character) {
+      case '\n':
+        stream << "\\n";
+        break;
+      case '\t':
+        stream << "\\t";
+        break;
+      case '\r':
+        stream << "\\r";
+        break;
+      case '\0':
+        stream << "-";
+        break;
+      default:
+        stream << this->character;
+    }
+    double percent = (static_cast<double>(this->frequency) / static_cast<double>(this->total)) * 100;
+    stream << "': "
+           << std::fixed
+           << std::setprecision(2)
+           << percent
+           << "%";
+    return stream.str();
   }
 }

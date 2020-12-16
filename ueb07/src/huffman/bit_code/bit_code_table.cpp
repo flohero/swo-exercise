@@ -46,6 +46,7 @@ namespace huffman {
       code.print();
       std::cout << std::endl;
     }
+    std::cout << std::endl;
   }
 
   void bit_code_table::bit_code_table_rec(const huffman_tree_node *node,

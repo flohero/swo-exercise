@@ -15,6 +15,8 @@ namespace huffman {
 
       [[nodiscard]] huffman_tree_node *get_root() const;
 
+      void print() const;
+
     private:
       huffman_tree_node *root;
 

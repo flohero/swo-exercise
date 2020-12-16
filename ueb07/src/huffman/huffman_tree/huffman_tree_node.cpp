@@ -80,4 +80,23 @@ namespace huffman {
     return this->value;
   }
 
+  void huffman_tree_node::print() {
+    std::cout << "Huffman Tree" << std::endl;
+    print_rec("", false);
+  }
+
+  void huffman_tree_node::print_rec(const std::string &prefix, bool is_right) {
+
+    std::cout << prefix;
+
+    std::cout << (is_right ? "├──" : "└──");
+
+    std::cout << this->value.to_string() << std::endl;
+
+    if(this->is_leaf()) {
+      return;
+    }
+    this->right->print_rec(prefix + (is_right ? "│   " : "    "), true);
+    this->left->print_rec(prefix + (is_right ? "│   " : "    "), false);
+  }
 }

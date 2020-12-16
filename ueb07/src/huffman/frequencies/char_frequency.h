@@ -30,7 +30,7 @@ namespace huffman {
 
       [[nodiscard]] char get_character() const;
 
-      [[nodiscard]] int get_frequency() const;
+      [[nodiscard]] std::string to_string() const;
   };
 }
 

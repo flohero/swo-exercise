@@ -2,6 +2,7 @@
 // Created by florian on 11.12.20.
 //
 
+#include <iostream>
 #include "coding_token.h"
 #include "bit_code/bit_code.h"
 
@@ -19,6 +20,7 @@ namespace huffman {
   void coding_token::print() {
     this->freq_table.print();
     this->code_table.print(this->freq_table.sorted_keys());
+    this->tree.print();
   }
 
   bit_code coding_token::char_to_bitcode(const char key) const {
