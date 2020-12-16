@@ -14,7 +14,7 @@ namespace huffman {
 
         virtual ~bit_stream() = default;
 
-        virtual std::string content() const = 0;
+        [[nodiscard]] virtual std::string content() const = 0;
       protected:
         std::string filename;
     };

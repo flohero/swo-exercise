@@ -20,8 +20,6 @@ namespace huffman {
 
       [[nodiscard]] char get_character() const;
 
-      bool operator<(bit_code other) const;
-
     private:
       char key = '\0';
       std::vector<bool> bits;

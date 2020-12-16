@@ -8,13 +8,13 @@
 #include "bit_code.h"
 
 namespace huffman {
-  class bit_code_list {
+  class bit_code_table {
     public:
-      explicit bit_code_list(const huffman_tree &tree);
+      explicit bit_code_table(const huffman_tree &tree);
 
       [[nodiscard]] bit_code find_code_of_char(char key) const;
 
-      void print(const std::vector<char>& ordering) const;
+      void print(const std::vector<char> &ordering) const;
 
       [[nodiscard]] std::vector<bit_code> all_codes() const;
 
@@ -22,8 +22,8 @@ namespace huffman {
       std::vector<bit_code> bit_codes;
 
       void
-      coding_map_rec(const huffman_tree_node *node,
-                     const std::vector<bool> &bit_vec = std::vector<bool>{});
+      bit_code_table_rec(const huffman_tree_node *node,
+                         const std::vector<bool> &bit_vec = std::vector<bool>{});
 
   };
 }

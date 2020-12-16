@@ -21,4 +21,11 @@ namespace huffman {
   huffman_tree::~huffman_tree() {
     delete this->root;
   }
+
+  /**
+   * @returns the root of the tree
+   */
+  huffman_tree_node *huffman_tree::get_root() const  {
+    return this->root;
+  }
 }

@@ -16,6 +16,9 @@ namespace huffman {
     std::cout << this->to_string();
   }
 
+  /**
+   * @returns the  bits as a string in 1 and 0
+   */
   std::string bit_code::to_string() const {
     std::string code;
     for (auto it: this->bits) {

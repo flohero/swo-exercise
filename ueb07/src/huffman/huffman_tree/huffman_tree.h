@@ -13,10 +13,7 @@ namespace huffman {
 
       ~huffman_tree();
 
-      //TODO: Remove
-      [[nodiscard]] huffman_tree_node *get_root() const {
-        return this->root;
-      }
+      [[nodiscard]] huffman_tree_node *get_root() const;
 
     private:
       huffman_tree_node *root;

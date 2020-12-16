@@ -5,7 +5,7 @@
 :experimental:
 :listing-caption: Listing
 :source-highlighter: rouge
-:sourcedir: ../src
+:sourcedir: ../src/huffman
 :imgdir: ./img
 :toc:
 :toclevels: 4
@@ -16,7 +16,7 @@
 .Klassen-Diagram, für mehr Lesbarkeit wurden bestimmte Schlüsselwörter, wie `const`, weggelassen
 [plantuml, diagram-classes, png]
 ....
-class bit_stream{
+abstract class bit_stream{
     # string filename
     + bit_stream(string filename)
     + \~bit_stream()
@@ -33,7 +33,7 @@ class default_stream {
     + string content()
 }
 
-class content {
+abstract class content {
     # bit_stream *stream
     + content()
     + content(string file)
@@ -55,11 +55,22 @@ class huffman_default_content {
 }
 
 class bit_code {
-    - vector<bool> bits;
+    - vector<bool> bits
+    - char key
     + bit_code()
     + bit_code(vector<bool> bits)
     + void print()
     + string to_string()
+    + char get_character()
+}
+
+class bit_code_table {
+    - vector<bit_code> bit_codes
+    - void bit_code_table_rec(huffman_tree_node *node, vector<bool> &bit_vec = vector<bool>{})
+    + bit_code_table(huffman_tree &tree)
+    + bit_code find_code_of_char(char key)
+    + void print(vector<char> &ordering)
+    + vector<bit_code> all_codes()
 }
 
 class char_frequency {
@@ -79,12 +90,12 @@ class char_frequency {
 
 class coding_token {
     - frequency_table freq_table
-    - huffman_tree_node *build_tree()
-    - void coding_map_rec(map<char, bit_code> &codes,  huffman_tree_node *node,
-                            vector<bool> &bit_vec = vector<bool>{})
+    - huffman_tree tree
+    - bit_code_table code_table
     + coding_token(string &content)
-    + map<char, bit_code> *coding_map()
     + void print()
+    + bit_code char_to_bit_code(char key)
+    + vector<bit_code> codes()
 }
 
 class frequency_table {
@@ -92,10 +103,16 @@ class frequency_table {
     - size_t total = 0
     + frequency_table(string &str)
     + void print()
-    + huffman_tree_node *build_tree()
-    + vector<char> keys()
-    - set<huffman_tree_node *, huffman_tree_node_comperator> to_set()
-    + {static} delete_huffman_frequency_set(set<huffman_tree_node *, huffman_tree_node_comperator> &set)
+    + vector<char> sorted_keys()
+    - set<huffman_tree_node *, comparator> to_set()
+    + {static} delete_huffman_frequency_set(set<huffman_tree_node *, comparator> &set)
+}
+
+class huffman_tree {
+    - huffman_tree_node *root
+    + huffman_tree(frequency_table &freq_table)
+    + \~huffman_tree()
+    + huffman_tree_node *get_root()
 }
 
 class huffman_tree_node {
@@ -113,7 +130,10 @@ class huffman_tree_node {
     + bool is_leaf()
     + huffman_tree_node &operator+(huffman_tree_node *node)
     + bool operator<(huffman_tree_node &node)
+}
 
+entity comparator {
+    + bool operator()(huffman_tree_node *l, huffman_tree_node *r)
 }
 
 bit_stream <|-- bit_string_stream
@@ -122,22 +142,43 @@ bit_stream <|-- default_stream
 content <|-- huffman_content
 huffman_content <|-- huffman_default_content
 
-content "1" -- "1" bit_string_stream: erzeugt
-huffman_default_content "1" -- "1" default_stream: erzeugt
+content "1" --> "1" bit_string_stream: erzeugt
+huffman_default_content "1" --> "1" default_stream: erzeugt
 
-huffman_content "1" -- "1" coding_token: erzeugt
+huffman_content "1" --> "1" coding_token: erzeugt
 
-coding_token "1" -- "n" bit_code: erzeugt
-coding_token "1" -- "1" frequency_table: erzeugt
-coding_token "1" -- "1" huffman_tree_node: erhält
+bit_code_table "1" --> "n" bit_code: erzeugt
+bit_code_table "1" ..> "1" huffman_tree: erhält
 
-frequency_table "1" -- "n" huffman_tree_node: erzeugt
-frequency_table "1" -- "n" char_frequency: erzeugt
-huffman_tree_node "1" -- "1" char_frequency: erhält
+coding_token "1" --> "1" bit_code_table: erzeugt
+coding_token "1" --> "1" frequency_table: erzeugt
+coding_token "1" --> "1" huffman_tree: erzeugt
+
+frequency_table "1" --> "n" huffman_tree_node: erzeugt
+frequency_table "1" --> "n" char_frequency: erzeugt
+
+huffman_tree "1" ..> "1" frequency_table: erhält
+
+huffman_tree_node "1" ..> "1" char_frequency: erhält
+
+huffman_tree_node "1" --> "1" comparator: enthält
 ....
 
+=== bit_stream
+Nur eine abstrakte Klasse, welche die von den anderen Streams zu implementierenden Methoden vorgibt.
+
+==== default_stream
+Erhält eine String value, welche einfach als Inhalt zurückgegeben wird.
+Dadurch wird das Testen wesentlich vereinfacht,
+da nicht für jeden Testfall ein neues File erzeugt werden muss.
+
+https://en.wikipedia.org/wiki/Mock_object[Siehe Mocking.]
+
+==== bit_string_stream
+Erhält einen File-Pfad und versucht das File an dieser Stelle auszulesen.
+
 === content
-*Aka `text_coder`, allerdings find ich den Namen sehr unpassend, daher `content`*
+*Aka `text_coder`, allerdings finde ich den Namen sehr unpassend, daher `content`*
 
 `content` und die davon abgeleiteten Klassen repräsentieren den Inhalt eines Files.
 Der Inhalt kann kodiert und dekotiert werden.
@@ -153,32 +194,285 @@ die Kompressionsrate, die Häufigkeitstabelle und die Kodierungstabelle.
 Abgeleitet von `huffman_content` erstellt statt einem `bit_string_stream`,
 einen `default_stream` und nutzt dessen Inhalt.
 
-=== bit_stream
-Liest ein File aus und gibt dessen Inhalt zurück.
-
-==== default_stream
-Erhält eine String value, welche einfach als Inhalt zurückgegeben wird.
 
 === coding_token
 Erzeugt die benötigten Tabellen und den Huffman-Baum.
 
-==== Frequency Table
-Wird in der Klasse `frequency_table` erzeugt.
+=== frequency_table
+*Aka huffman_list.*
 
-==== Huffman Baum
-Wird von `frequency_table` erzeugt.
+Erhält einen String. Alle Zeichen werden als Key in eine `map` gespeichert.
+Sollte ein Zeichen doppelt vorkommen, wird die Value an der Stelle des Keys um eins erhöht.
 
-==== Coding table
-Die Coding Table wird direkt in dieser Klasse generiert, da hierfür nicht viele Schritte bnötigt werden.
-Hier für wird der Huffman Baum rekursiv durchlaufen, bis jeder Leaf abgelaufen wurde.
-Der Pfad zu diesem Leaf in eine eigene `map` gespeichert,
-dieser wird durch `0` (linker Knoten) und `1` (rechter Knoten) dargestellt.
-Die `map` ist nach Keys, also den Zeichen sortiert.
+Da `maps` nach Keys sortiert werden,
+gibt es eine eigene `to_set` Funktion, welche die `map` in ein `set` umwandelt.
+Das `set` enthält die einzelnen `huffman_tree_nodes`, und ist nach diesen auch sortiert.
 
-=== Frequency Table
-Erzeugt eine `map` aus einem `string`.
-Diese enthält die Häufigkeit eines Zeichens und das Zeichen als Key.
+Ein Nachteil dieser Implementierung ist, dass das `set` nach Benutzung eventuell gelöscht werden muss.
+
+=== char_frequency
+Repräsentiert wie oft ein bestimmter `char` in einem `string` vorkommt.
+Es werden auch die `+`, `<` und `>` Operatoren überladen.
+Eine `char_frequency` ist kleiner falls die `frequency` kleiner ist
+oder sollte sie gleich groß sein, der `character` kleiner ist.
+Sollten die beiden `char_frequency` in dieser Hinsicht ident sein,
+gibt es eine `id`, welche zu letzt verglichen wird.
+Dadurch wird gewährleistet, dss jede `char_frequency` eindeutig größer oder kleiner ist.
+
+Bei der Addition wird die `frequency` beider `char_frequency` aufaddiert
+und die daraus entstehende neue `char_frequency` bekommt einen Nullterminator als `character`,
+sollten die ursprünglichen `character` ungleich sein, sonst wird der alte `character` übernommen.
+
+[plantuml, char_frequency_addition, png]
+....
+object char_frequency1 {
+    int id = 0
+    char character = 'a'
+    int frequency = 10
+}
+
+object char_frequency2 {
+    int id = 1
+    char character = 'b'
+    int frequency = 3
+}
+
+object char_frequency3 {
+    int id = 2
+    char character = '\0'
+    int frequency = 13
+}
+
+() add
+
+char_frequency1  --> add
+char_frequency2  --> add
+add --> char_frequency3
+....
+
+=== huffman_tree
+Erzeugt aus einem `frequency_table` einen `huffman_tree`.
+
+Zum Erzeugen des Baumes wird der Algorithmus laut Angabe genutzt.
+Die ersten zwei `huffman_tree_nodes` in einem geordentem `set<huffman_tree_node*>`,
+werden mithilfes überladenen `+` Operator verknüpft,
+dieser erzeugt dann einen neuen Root-Knoten,
+welcher in das sortierte `set` eingefügt wird.
+Die beiden alten Knoten werden aus dem `set` entfernt.
+Dies geschieht solange bis nur noch ein Element in dem `set` vorhanden ist.
+Das übrig gebliebene Element in dem `set` wird dann als Root-Knoten genutzt.
+
+=== huffman_tree_node
+Ist Teil eines `huffman_tree` und enthält selber noch einen linken und rechten Knoten.
+Der `huffman_tree_node` enthält mehrere Konstrukoren um die Value(`char_frequency`)
+und die Knoten links, rechts zu initialisieren.
+Ausserdem werden die `+` und `<` Operatoren überladen.
+
+Ein Node ist kleiner als ein zweiter, wenn die darin enthaltene `char_frequency` kleiner ist.
+
+Bei der Addition wird ein neuer Root-Node erzeugt und die zu addierenden Nodes werden eingefügt.
+Als `char_frequency` im neuen Root-node werden die beiden `char_frequencies` der ursprünglichen Nodes addiert.
+
+.`huffman_tree_node` Addition
+[graphviz, "huffman_node_add"]
+---------------------------------------------------------------------
+digraph addition {
+    { rank=same NodeLeft add NodeRight }
+    NodeLeft
+    add [shape=none]
+    NodeRight
+    "NodeLeft" -> "add" [arrowhead=none]
+    "add" -> "NodeRight" [arrowhead=none]
+}
+---------------------------------------------------------------------
+
+.Ergebnis einer `huffman_tree_node` Addition
+[graphviz, "huffman_node_add_result"]
+---------------------------------------------------------------------
+digraph addition {
+    { rank=same NodeLeft NodeRight }
+    Root
+    NodeLeft
+    NodeRight
+    Root -> {NodeLeft, NodeRight}
+}
+---------------------------------------------------------------------
+
+=== bit_code_table
+Erhält einen `huffman_tree` und erzeugt daraus den `bit_code_table`.
+
+Dabei wird der Baum rekursiv durchiteriert.
+Für jedes mal nach links oder rechts gehen im Baum,
+wird ein `true`(rechts) oder `false`(links) in einen `vector<bool>` gespeichert.
+Dieser `vector<bool>` wird in der rekursiven Funktion by value übergeben,
+dadurch wird jedes mal eine Kopie des `vector` erzeugt.
+Der Rekursionsboden ist erreicht, wenn der Knoten ein Leaf in dem Baum ist,
+dann wird der erzeugt `vector<bool>` und der `char` der an dieser Stelle im Baum steht,
+in Form eines `bit_code` in den `vector<bit_code>` hinzugefügt.
+
+Sollte der Baum allerdings nur den Root-Knoten enthalten, wird dieser direkt(ohne Rekursion),
+in den `vector<bit_code>` eingefügt.
+Der Code für diesen einen `char` ist dann einfach `0`.
+
+=== bit_code
+Repräsentiert einen einen `character` mit seinem Code, dieser ist ein `vector<bool>`.
+
+== Source-Code
+.bit_stream/bit_stream.h
+[source,cpp]
+----
+include::{sourcedir}/bit_stream/bit_stream.h[]
+----
+
+.bit_stream/bit_stream.cpp
+[source,cpp]
+----
+include::{sourcedir}/bit_stream/bit_stream.cpp[]
+----
+
+.bit_stream/bit_string_stream.h
+[source,cpp]
+----
+include::{sourcedir}/bit_stream/bit_string_stream.h[]
+----
+
+.bit_stream/bit_string_stream.cpp
+[source,cpp]
+----
+include::{sourcedir}/bit_stream/bit_string_stream.cpp[]
+----
+
+.bit_stream/default_stream.h
+[source,cpp]
+----
+include::{sourcedir}/bit_stream/default_stream.h[]
+----
+
+.bit_stream/default_stream.cpp
+[source,cpp]
+----
+include::{sourcedir}/bit_stream/default_stream.cpp[]
+----
+
+.content/content.h
+[source,cpp]
+----
+include::{sourcedir}/content/content.h[]
+----
+
+.content/content.cpp
+[source,cpp]
+----
+include::{sourcedir}/content/content.cpp[]
+----
+
+.content/huffman_content.h
+[source,cpp]
+----
+include::{sourcedir}/content/huffman_content.h[]
+----
+
+.content/huffman_content.cpp
+[source,cpp]
+----
+include::{sourcedir}/content/huffman_content.cpp[]
+----
+
+.content/huffman_default_content.h
+[source,cpp]
+----
+include::{sourcedir}/content/huffman_default_content.h[]
+----
+
+.content/huffman_default_content.cpp
+[source,cpp]
+----
+include::{sourcedir}/content/huffman_default_content.cpp[]
+----
+
+.coding_token.h
+[source,cpp]
+----
+include::{sourcedir}/coding_token.h[]
+----
+
+.coding_token.cpp
+[source,cpp]
+----
+include::{sourcedir}/coding_token.cpp[]
+----
+
+.frequencies/frequency_table.h
+[source,cpp]
+----
+include::{sourcedir}/frequencies/frequency_table.h[]
+----
+
+.frequencies/frequency_table.cpp
+[source,cpp]
+----
+include::{sourcedir}/frequencies/frequency_table.cpp[]
+----
+
+.frequencies/char_frequency.h
+[source,cpp]
+----
+include::{sourcedir}/frequencies/char_frequency.h[]
+----
+
+.frequencies/char_frequency.cpp
+[source,cpp]
+----
+include::{sourcedir}/frequencies/char_frequency.cpp[]
+----
+
+.huffman_tree/huffman_tree.h
+[source,cpp]
+----
+include::{sourcedir}/huffman_tree/huffman_tree.h[]
+----
+
+.huffman_tree/huffman_tree.cpp
+[source,cpp]
+----
+include::{sourcedir}/huffman_tree/huffman_tree.cpp[]
+----
+
+.huffman_tree/huffman_tree_node.h
+[source,cpp]
+----
+include::{sourcedir}/huffman_tree/huffman_tree_node.h[]
+----
+
+.huffman_tree/huffman_tree_node.cpp
+[source,cpp]
+----
+include::{sourcedir}/huffman_tree/huffman_tree_node.cpp[]
+----
+
+.bit_code/bit_code_table.h
+[source,cpp]
+----
+include::{sourcedir}/bit_code/bit_code_table.h[]
+----
+
+.bit_code/bit_code_table.cpp
+[source,cpp]
+----
+include::{sourcedir}/bit_code/bit_code_table.cpp[]
+----
+
+.bit_code/bit_code.h
+[source,cpp]
+----
+include::{sourcedir}/bit_code/bit_code.h[]
+----
+
+.bit_code/bit_code.cpp
+[source,cpp]
+----
+include::{sourcedir}/bit_code/bit_code.cpp[]
+----
 
 == Test-Cases
-=== Memory-Leaks
 Zum Testen auf Memory Leaks wurde https://valgrind.org[valgrind] verwendet.

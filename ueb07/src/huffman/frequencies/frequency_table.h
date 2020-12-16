@@ -24,9 +24,10 @@ namespace huffman {
 
       [[nodiscard]] std::vector<char> sorted_keys() const;
 
+      [[nodiscard]] std::set<huffman_tree_node *, huffman_tree_node::comparator> to_set() const;
+
       static void delete_huffman_frequency_set(
               const std::set<huffman_tree_node *, huffman_tree_node::comparator> &set);
 
-      [[nodiscard]] std::set<huffman_tree_node *, huffman_tree_node::comparator> to_set() const;
   };
 }
