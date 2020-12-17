@@ -48,3 +48,5 @@ endfunction()
 
 target(huffman)
 configure_file(resources/test.txt resources/test.txt COPYONLY)
+configure_file(resources/empty.txt resources/empty.txt COPYONLY)
+configure_file(resources/lorem.txt resources/lorem.txt COPYONLY)

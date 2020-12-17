@@ -9,6 +9,12 @@ using std::cout;
 using std::endl;
 
 namespace huffman {
+
+  /**
+   * Constructs frequency table
+   * @param str create the frequencies from this string
+   * @throws invalid_argument if string is empty
+   */
   frequency_table::frequency_table(const std::string &str) {
     total = str.length();
     if (total == 0) {
@@ -36,6 +42,9 @@ namespace huffman {
     return freq_set;
   }
 
+  /**
+   * @returns the keys to the frequency map, sorted by the frequency of a key
+   */
   std::vector<char> frequency_table::sorted_keys() const {
     auto set = this->to_set();
     std::vector<char> k;
@@ -47,6 +56,9 @@ namespace huffman {
     return k;
   }
 
+  /**
+   * Prints the frequency table
+   */
   void frequency_table::print() const {
     auto set = this->to_set();
     cout << "Frequency Table" << endl

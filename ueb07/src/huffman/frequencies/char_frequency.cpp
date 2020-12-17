@@ -66,6 +66,9 @@ namespace huffman {
     return this->character;
   }
 
+  /*
+   * @returns a string representation of char_frequency with escape characters
+   */
   std::string char_frequency::to_string() const {
     std::stringstream stream;
     stream << "'";

@@ -18,6 +18,10 @@ namespace huffman {
     delete this->token;
   }
 
+  /**
+   * Encodes the given string with the huffman encoding
+   * @returns the encoded string
+   */
   std::string huffman_content::encode() const {
     std::string encoded;
     for (char c: this->stream->content()) {
@@ -27,6 +31,10 @@ namespace huffman {
     return encoded;
   }
 
+  /**
+   * @param encoded the huffman encoded string
+   * @returns the decoded string
+   */
   std::string huffman_content::decode(std::string encoded) const {
     std::string decoded;
     while (encoded.length() != 0) {
@@ -46,6 +54,11 @@ namespace huffman {
     return decoded;
   }
 
+  /**
+   * Prints statistics, like compression rate, frequency table and bit code table.
+   * Checks if decoded string equals bit_stream content
+   * @throws runtime_error if the decoded string doesn't equal to the bit_stream content
+   */
   void huffman_content::statistics() const {
     std::string codes = encode();
     std::string str = decode(codes);

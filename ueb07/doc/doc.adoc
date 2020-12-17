@@ -85,7 +85,7 @@ class char_frequency {
     + bool operator<(char_frequency &freq)
     + bool operator>(char_frequency &freq)
     + char get_character()
-    + int get_frequency()
+    + string to_string()
 }
 
 class coding_token {
@@ -113,6 +113,7 @@ class huffman_tree {
     + huffman_tree(frequency_table &freq_table)
     + \~huffman_tree()
     + huffman_tree_node *get_root()
+    + void print()
 }
 
 class huffman_tree_node {
@@ -130,6 +131,8 @@ class huffman_tree_node {
     + bool is_leaf()
     + huffman_tree_node &operator+(huffman_tree_node *node)
     + bool operator<(huffman_tree_node &node)
+    + void print()
+    - void print_rec(string &prefix, bool is_right)
 }
 
 entity comparator {
@@ -199,7 +202,7 @@ einen `default_stream` und nutzt dessen Inhalt.
 Erzeugt die benötigten Tabellen und den Huffman-Baum.
 
 === frequency_table
-*Aka huffman_list.*
+*Aka `huffman_list`, hier auch wieder eine zweideutige Benennung aus meiner Sicht.*
 
 Erhält einen String. Alle Zeichen werden als Key in eine `map` gespeichert.
 Sollte ein Zeichen doppelt vorkommen, wird die Value an der Stelle des Keys um eins erhöht.
@@ -215,14 +218,15 @@ Repräsentiert wie oft ein bestimmter `char` in einem `string` vorkommt.
 Es werden auch die `+`, `<` und `>` Operatoren überladen.
 Eine `char_frequency` ist kleiner falls die `frequency` kleiner ist
 oder sollte sie gleich groß sein, der `character` kleiner ist.
-Sollten die beiden `char_frequency` in dieser Hinsicht ident sein,
-gibt es eine `id`, welche zu letzt verglichen wird.
+Sollten die beiden `char_frequencies` in dieser Hinsicht ident sein,
+gibt es eine `id`, welche zuletzt verglichen wird.
 Dadurch wird gewährleistet, dss jede `char_frequency` eindeutig größer oder kleiner ist.
 
-Bei der Addition wird die `frequency` beider `char_frequency` aufaddiert
+Bei der Addition wird die `frequency` beider `char_frequencies` aufaddiert
 und die daraus entstehende neue `char_frequency` bekommt einen Nullterminator als `character`,
 sollten die ursprünglichen `character` ungleich sein, sonst wird der alte `character` übernommen.
 
+.Addition von zwei `char_frequencies`
 [plantuml, char_frequency_addition, png]
 ....
 object char_frequency1 {
@@ -476,3 +480,4 @@ include::{sourcedir}/bit_code/bit_code.cpp[]
 
 == Test-Cases
 Zum Testen auf Memory Leaks wurde https://valgrind.org[valgrind] verwendet.
+

@@ -80,11 +80,20 @@ namespace huffman {
     return this->value;
   }
 
+  /**
+   * Print this node and following nodes
+   */
   void huffman_tree_node::print() {
     std::cout << "Huffman Tree" << std::endl;
     print_rec("", false);
   }
 
+  /**
+   * Recursively iterates over a tree and prints its nodes.
+   * Recursion floor is reached when node is a leaf.
+   * @param prefix a string prefix
+   * @param is_right distinguish between left and right nodes
+   */
   void huffman_tree_node::print_rec(const std::string &prefix, bool is_right) {
 
     std::cout << prefix;

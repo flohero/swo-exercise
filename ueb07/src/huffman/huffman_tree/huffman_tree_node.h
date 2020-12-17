@@ -45,7 +45,7 @@ namespace huffman {
 
       void print();
 
-      void print_rec(const std::string &prefix, bool is_left);
+      void print_rec(const std::string &prefix, bool is_right);
   };
 }
 

@@ -19,6 +19,12 @@ namespace huffman {
     }
   }
 
+  /**
+   * find the bit_code of a char
+   * @param key the char to find the bit_code for
+   * @returns the bti_code of the char
+   * @throws runtime_error if the bit_code could not be found
+   */
   bit_code bit_code_table::find_code_of_char(const char key) const {
     for(auto it: this->bit_codes) {
       if(it.get_character() == key) {
@@ -49,6 +55,12 @@ namespace huffman {
     std::cout << std::endl;
   }
 
+  /**
+   * Recursive function to build the bit_code_table.
+   * Recursion floor is reached if the node is a leaf.
+   * @param node
+   * @param bit_vec the bit_code to reach the node from the root node
+   */
   void bit_code_table::bit_code_table_rec(const huffman_tree_node *node,
                                           const std::vector<bool> &bit_vec) {
     if (node->is_leaf()) {
