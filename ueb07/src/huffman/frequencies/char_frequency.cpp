@@ -72,7 +72,7 @@ namespace huffman {
    */
   std::string char_frequency::to_string() const {
     std::stringstream stream;
-    stream << utils::escape_char_to_printable(this->character);
+    stream << huffman::escape_char_to_printable(this->character);
     double percent = (static_cast<double>(this->frequency) / static_cast<double>(this->total)) * 100;
     stream << ": "
            << std::fixed

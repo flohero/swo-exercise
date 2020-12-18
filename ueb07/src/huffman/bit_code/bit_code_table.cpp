@@ -49,7 +49,7 @@ namespace huffman {
               << "------------" << std::endl;
     for (const auto &it: ordering) {
       auto code = this->find_code_of_char(it);
-      std::cout << utils::escape_char_to_printable(code.get_character());
+      std::cout << huffman::escape_char_to_printable(code.get_character());
       std::cout << "| ";
       code.print();
       std::cout << std::endl;
