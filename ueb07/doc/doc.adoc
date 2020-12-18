@@ -15,6 +15,9 @@
 *Annahme: Es dürfen `set`, `vector`, `map`, etc genutzt werden,
 da dazu nichts in der Angabe steht.*
 
+*Achtung: Die Klassen wurden wie in der Angabe implementiert,
+allerdings kann die Namensgebung zur besseren Lesbarkeit abweichen*
+
 .Klassen-Diagram, für mehr Lesbarkeit wurden bestimmte Schlüsselwörter, wie `const`, weggelassen
 [plantuml, diagram-classes, png]
 ....
@@ -137,8 +140,12 @@ class huffman_tree_node {
     - void print_rec(string &prefix, bool is_right)
 }
 
-entity comparator {
+object comparator {
     + bool operator()(huffman_tree_node *l, huffman_tree_node *r)
+}
+
+object utils {
+    + string escape_char_to_printable(char c, string &padding = " ", std::string &enclose = "'");
 }
 
 bit_stream <|-- bit_string_stream
@@ -167,6 +174,9 @@ huffman_tree "1" ..> "1" frequency_table: erhält
 huffman_tree_node "1" ..> "1" char_frequency: erhält
 
 huffman_tree_node "1" --> "1" comparator: enthält
+
+frequency_table "1" --> "1" utils: nutzt
+bit_code_table "1" --> "1" utils: nutzt
 ....
 
 === bit_stream
@@ -323,6 +333,7 @@ Der Code für diesen einen `char` ist dann einfach `0`.
 === bit_code
 Repräsentiert einen einen `character` mit seinem Code, dieser ist ein `vector<bool>`.
 
+<<<
 == Source-Code
 .bit_stream/bit_stream.h
 [source,cpp]
@@ -501,6 +512,7 @@ include::{sourcedir}/main.cpp[]
 == Test-Cases
 Zum Testen auf Memory Leaks wurde https://valgrind.org[valgrind] verwendet.
 Es wird mit folgendem Command getestet:
+
 .Valgrind Command
 [source]
 ----
@@ -544,7 +556,7 @@ Es wird eine erfolgreiche Operation erwartet.
 .Read From Existing File Test-Case
 [source, cpp]
 ----
-include::{sourcedir}/main.cpp[lines=18..29]
+include::{sourcedir}/main.cpp[lines=18..30]
 ----
 
 .Read From Existing File Output
@@ -604,7 +616,7 @@ Es wird eine `invalid_argument` Exception erwartet.
 .Read From Empty File Test-Case
 [source,cpp]
 ----
-include::{sourcedir}/main.cpp[lines=46..58]
+include::{sourcedir}/main.cpp[lines=46..59]
 ----
 
 .Read From Empty File Output
@@ -634,7 +646,7 @@ Es wird eine `invalid_argument` Exception erwartet.
 .Empty Content Test-Case
 [source,cpp]
 ----
-include::{sourcedir}/main.cpp[lines=60..71]
+include::{sourcedir}/main.cpp[lines=60..72]
 ----
 
 .Empty Content Output
