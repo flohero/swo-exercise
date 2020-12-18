@@ -1,0 +1,29 @@
+*** Simple Test Case *** 
+Expecting a successful run
+Frequency Table
+---------------
+'a': 33.33%
+'b': 33.33%
+'c': 33.33%
+
+Coding Table
+------------
+a | 10
+b | 11
+c | 0
+
+Huffman Tree
+└──'-': 100.00%
+    ├──'-': 66.67%
+    │   ├──'b': 33.33%
+    │   └──'a': 33.33%
+    └──'c': 33.33%
+
+Encoding stats:
+-------------------
+Original Size    : 48 bits
+Size Now         : 10 bits
+Compression Rate : 20.83%
+
+1010111100
+aabbcc

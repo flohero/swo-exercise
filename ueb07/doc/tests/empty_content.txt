@@ -1,0 +1,4 @@
+ *** Empty Content Test Case ***
+Expecting a invalid_argument exception
+Caught Invalid Argument Exception!
+Content was empty

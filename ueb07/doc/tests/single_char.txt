@@ -1,0 +1,21 @@
+ *** Single Character Test Case ***
+Expecting a successful run
+Frequency Table
+---------------
+'a': 100.00%
+
+Coding Table
+------------
+a | 0
+
+Huffman Tree
+└──'a': 100.00%
+
+Encoding stats:
+-------------------
+Original Size    : 8 bits
+Size Now         : 1 bits
+Compression Rate : 12.50%
+
+0
+a

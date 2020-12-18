@@ -1,0 +1,37 @@
+ *** Standard Testcase ***
+Expecting a successful run
+Frequency Table
+---------------
+'N': 8.00%
+'D': 12.00%
+'R': 15.00%
+'C': 32.00%
+'A': 33.00%
+
+Coding Table
+------------
+N | 010
+D | 011
+R | 00
+C | 10
+A | 11
+
+Huffman Tree
+└──'-': 100.00%
+    ├──'-': 65.00%
+    │   ├──'A': 33.00%
+    │   └──'C': 32.00%
+    └──'-': 35.00%
+        ├──'-': 20.00%
+        │   ├──'D': 12.00%
+        │   └──'N': 8.00%
+        └──'R': 15.00%
+
+Encoding stats:
+-------------------
+Original Size    : 800 bits
+Size Now         : 220 bits
+Compression Rate : 27.50%
+
+1111101010010010011011011111110101010100000111110101010010010010110110110110110111010101111111010010111111111110100110110110110000111111110101010100000111111111100000010101010111100001111111111111110101000000000010101010
+AACCCNNDDDAACCCCCRRAACCCCNNNADDDDDCCCAAACCNAAAAACCDDDDRRAAAANCCCRRAAAAARRRCCCCAARRAAAAAAACCCRRRRNCCC

@@ -1,0 +1,4 @@
+ *** Read From Non Existing File Testcase ***
+Expecting a run_time exception
+Caught Runtime Exception!
+Could not open file: ./path/to/non/existing.file

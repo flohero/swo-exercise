@@ -1,0 +1,33 @@
+ *** Four unique Characters Test Case ***
+Expecting a successful run
+Frequency Table
+---------------
+'a': 25.00%
+'d': 25.00%
+'f': 25.00%
+'s': 25.00%
+
+Coding Table
+------------
+a | 00
+d | 01
+f | 10
+s | 11
+
+Huffman Tree
+└──'-': 100.00%
+    ├──'-': 50.00%
+    │   ├──'s': 25.00%
+    │   └──'f': 25.00%
+    └──'-': 50.00%
+        ├──'d': 25.00%
+        └──'a': 25.00%
+
+Encoding stats:
+-------------------
+Original Size    : 32 bits
+Size Now         : 8 bits
+Compression Rate : 25.00%
+
+00110110
+asdf

@@ -12,6 +12,8 @@
 
 <<<
 == Lösungsidee
+*Annahme: Es dürfen `set`, `vector`, `map`, etc genutzt werden,
+da dazu nichts in der Angabe steht.*
 
 .Klassen-Diagram, für mehr Lesbarkeit wurden bestimmte Schlüsselwörter, wie `const`, weggelassen
 [plantuml, diagram-classes, png]
@@ -478,6 +480,300 @@ include::{sourcedir}/bit_code/bit_code.h[]
 include::{sourcedir}/bit_code/bit_code.cpp[]
 ----
 
+.utils.h
+[source,cpp]
+----
+include::{sourcedir}/utils.h[]
+----
+
+.utils.cpp
+[source,cpp]
+----
+include::{sourcedir}/utils.cpp[]
+----
+
+.main.cpp
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[]
+----
+
 == Test-Cases
 Zum Testen auf Memory Leaks wurde https://valgrind.org[valgrind] verwendet.
+Es wird mit folgendem Command getestet:
+.Valgrind Command
+[source]
+----
+valgrind --tool=memcheck --leak-check=full --leak-resolution=med --track-origins=yes --vgdb=no -s ./huffman
+----
 
+=== Standard Test-Case
+Es wurde das Beispiel aus der Angabe genutzt.
+Es wird eine erfolgreiche Operation erwartet.
+
+.Standard Test-Case
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[lines=9..16]
+----
+
+.Standard Test-Case Output
+[source]
+----
+include::tests/standard_test.txt[]
+----
+
+.Standard Test-Case Output
+image::tests/standard_test.png[Standard Test-Case Output]
+
+.Standard Valgrind
+[source]
+----
+==17507== HEAP SUMMARY:
+==17507==     in use at exit: 0 bytes in 0 blocks
+==17507==   total heap usage: 1,060 allocs, 1,060 frees, 115,274 bytes allocated
+==17507==
+==17507== All heap blocks were freed -- no leaks are possible
+==17507==
+==17507== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Read From Existing File Test-Case
+Es wird eine erfolgreiche Operation erwartet.
+
+.Read From Existing File Test-Case
+[source, cpp]
+----
+include::{sourcedir}/main.cpp[lines=18..29]
+----
+
+.Read From Existing File Output
+[source]
+----
+include::tests/existing_file.txt[]
+----
+
+.Read From Existing File Output
+image::tests/existing_file.png[Existing File Test-Case Output]
+
+.Read From Existing File Valgrind
+[source]
+----
+==16970== HEAP SUMMARY:
+==16970==     in use at exit: 0 bytes in 0 blocks
+==16970==   total heap usage: 1,077 allocs, 1,077 frees, 150,289 bytes allocated
+==16970==
+==16970== All heap blocks were freed -- no leaks are possible
+==16970==
+==16970== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Read From Non Existing File Test-Case
+Es wird ein `runtime_error` erwartet.
+
+.Read From Non Existing File Test-Case
+[source, cpp]
+----
+include::{sourcedir}/main.cpp[lines=32..44]
+----
+
+.Read From Non Existing File Output
+[source]
+----
+include::tests/non_existing.txt[]
+----
+
+.Read From Non Existing File Output
+image::tests/non_existing.png[Non Existing File Output]
+
+.Read From Non Existing File Valgrind
+[source]
+----
+==22078== HEAP SUMMARY:
+==22078==     in use at exit: 0 bytes in 0 blocks
+==22078==   total heap usage: 9 allocs, 9 frees, 74,562 bytes allocated
+==22078==
+==22078== All heap blocks were freed -- no leaks are possible
+==22078==
+==22078== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Read From Empty File Test-Case
+Es wird eine `invalid_argument` Exception erwartet.
+
+.Read From Empty File Test-Case
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[lines=46..58]
+----
+
+.Read From Empty File Output
+[source]
+----
+include::tests/empty_file.txt[]
+----
+
+.Read From Empty File Output
+image::tests/empty_file.png[Empty File Output]
+
+.Read From Empty File Valgrind
+[source]
+----
+==23536== HEAP SUMMARY:
+==23536==     in use at exit: 0 bytes in 0 blocks
+==23536==   total heap usage: 10 allocs, 10 frees, 82,752 bytes allocated
+==23536==
+==23536== All heap blocks were freed -- no leaks are possible
+==23536==
+==23536== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Empty Content Test-Case
+Es wird eine `invalid_argument` Exception erwartet.
+
+.Empty Content Test-Case
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[lines=60..71]
+----
+
+.Empty Content Output
+[source]
+----
+include::tests/empty_content.txt[]
+----
+
+.Empty Content Output
+image::tests/empty_content.png[Empty Content Output]
+
+.Empty Content Valgrind
+[source]
+----
+==24947== HEAP SUMMARY:
+==24947==     in use at exit: 0 bytes in 0 blocks
+==24947==   total heap usage: 6 allocs, 6 frees, 74,074 bytes allocated
+==24947==
+==24947== All heap blocks were freed -- no leaks are possible
+==24947==
+==24947== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Single Character Test-Case
+Es wird eine erfolgreiche Operation erwartet.
+
+.Single Character Test-Case
+[source, cpp]
+----
+include::{sourcedir}/main.cpp[lines=74..81]
+----
+
+.Single Character Output
+[source]
+----
+include::tests/single_char.txt[]
+----
+
+.Single Character Output
+image::tests/single_char.png[Single Character Output]
+
+.Single Character Valgrind
+[source]
+----
+==26150== HEAP SUMMARY:
+==26150==     in use at exit: 0 bytes in 0 blocks
+==26150==   total heap usage: 19 allocs, 19 frees, 74,305 bytes allocated
+==26150==
+==26150== All heap blocks were freed -- no leaks are possible
+==26150==
+==26150== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Four Unique Characters Test-Case
+Es wird eine erfolgreiche Operation erwartet.
+
+.Four Unique Characters Test-Case
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[lines=83..90]
+----
+
+.Four Unique Characters Output
+[source]
+----
+include::tests/four_characters.txt[]
+----
+
+.Four Unique Characters Output
+image::tests/four_characters.png[Four Unique Characters Output]
+
+.Four Unique Characters Valgrind
+[source]
+----
+==27940== HEAP SUMMARY:
+==27940==     in use at exit: 0 bytes in 0 blocks
+==27940==   total heap usage: 86 allocs, 86 frees, 76,308 bytes allocated
+==27940==
+==27940== All heap blocks were freed -- no leaks are possible
+==27940==
+==27940== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Simple Test-Case
+Es wird eine erfolgreiche Operation erwartet.
+
+.Simple Test-Case
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[lines=92..99]
+----
+
+.Simple Output
+[source]
+----
+include::tests/simple.txt[]
+----
+
+.Simple Output
+image::tests/simple.png[Simple Output]
+
+.Simple Valgrind
+[source]
+----
+==47585== HEAP SUMMARY:
+==47585==     in use at exit: 0 bytes in 0 blocks
+==47585==   total heap usage: 81 allocs, 81 frees, 76,291 bytes allocated
+==47585==
+==47585== All heap blocks were freed -- no leaks are possible
+==47585==
+==47585== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== 200 Word Test-Case
+Es wird eine erfolgreiche Operation erwartet.
+
+.200 Word Test-Case
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[lines=101..108]
+----
+
+.200 Word Output
+[source]
+----
+include::tests/200.txt[]
+----
+
+.200 Word Output
+image::tests/200.png[200 Word Output]
+
+.200 Word Valgrind
+[source]
+----
+==50861== HEAP SUMMARY:
+==50861==     in use at exit: 0 bytes in 0 blocks
+==50861==   total heap usage: 43,706 allocs, 43,706 frees, 4,364,156 bytes allocated
+==50861==
+==50861== All heap blocks were freed -- no leaks are possible
+==50861==
+==50861== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
