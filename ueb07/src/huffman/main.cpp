@@ -8,32 +8,36 @@ void test() {
 
   // Standard Test Case
   std::cout << separator
-            << "Standard Testcase"
+            << "Standard Test Case"
             << separator << std::endl
             << "Expecting a successful run" << std::endl;
   huffman_default_content{
-          "AACCCNNDDDAACCCCCRRAACCCCNNNADDDDDCCCAAACCNAAAAACCDDDDRRAAAANCCCRRAAAAARRRCCCCAARRAAAAAAACCCRRRRNCCC"}
-          .statistics();
+          "AACCCNNDDDAACCCCCRRAACCCCNNNADDDDDCCCAAACCNAAAAACCDDDDRRAAAANCCCRRAAAAARRRCCCCAARRAAAAAAACCCRRRRNCCC"
+  }.statistics();
 
   // Read from an existing file
-  // Content of file is: AACCCNNDDDAACCCCCRRAACCCCNNNADDDDDCCCAAACCNAAAAACCDDDDRRAAAANCCCRRAAAAARRRCCCCAARRAAAAAAACCCRRRRNCCC
+  /*
+   Content of file is:
+   AACCCNNDDDAACCCCCRRAACCCCNNNADDDDDCCCAAACCNAAAAACCDDDDRRAAAANCCCRRAAAAARRRCCCCAARRAAAAAAACCCRRRRNCCC
+   */
+
   std::cout << std::endl << std::endl << separator
-            << "Read From Existing File Testcase"
+            << "Read From Existing File Test Case"
             << separator << std::endl
             << "Expecting a successful run" << std::endl;
   huffman_content{
-          "../resources/test.txt"}
-          .statistics();
+          "../resources/test.txt"
+  }.statistics();
 
   // Read from an non existing file
   std::cout << std::endl << std::endl << separator
-            << "Read From Non Existing File Testcase"
+            << "Read From Non Existing File Test Case"
             << separator << std::endl
             << "Expecting a run_time exception" << std::endl;
   try {
     huffman_content{
-            "./path/to/non/existing.file"}
-            .statistics();
+            "./path/to/non/existing.file"
+    }.statistics();
   } catch (std::runtime_error &err) {
     std::cout << "Caught Runtime Exception!" << std::endl
               << err.what() << std::endl;
@@ -41,13 +45,13 @@ void test() {
 
   // Read from an empty file
   std::cout << std::endl << std::endl << separator
-            << "Read From Empty File Testcase"
+            << "Read From Empty File Test Case"
             << separator << std::endl
             << "Expecting a invalid_argument exception" << std::endl;
   try {
     huffman_content{
-            "../resources/empty.txt"}
-            .statistics();
+            "../resources/empty.txt"
+    }.statistics();
   } catch (std::invalid_argument &err) {
     std::cout << "Caught Invalid Argument Exception!" << std::endl
               << err.what() << std::endl;
@@ -60,8 +64,8 @@ void test() {
             << "Expecting a invalid_argument exception" << std::endl;
   try {
     huffman_default_content{
-            ""}
-            .statistics();
+            ""
+    }.statistics();
   } catch (std::invalid_argument &err) {
     std::cout << "Caught Invalid Argument Exception!" << std::endl
               << err.what() << std::endl;
@@ -73,8 +77,8 @@ void test() {
             << separator << std::endl
             << "Expecting a successful run" << std::endl;
   huffman_default_content{
-          "a"}
-          .statistics();
+          "a"
+  }.statistics();
 
   // Four unique Characters Test Case
   std::cout << std::endl << std::endl << separator
@@ -82,8 +86,8 @@ void test() {
             << separator << std::endl
             << "Expecting a successful run" << std::endl;
   huffman_default_content{
-          "asdf"}
-          .statistics();
+          "asdf"
+  }.statistics();
 
   // Simple Test Case
   std::cout << std::endl << std::endl << separator
@@ -91,8 +95,8 @@ void test() {
             << separator << std::endl
             << "Expecting a successful run" << std::endl;
   huffman_default_content{
-          "aabbcc"}
-          .statistics();
+          "aabbcc"
+          }.statistics();
 
   // 200 Word Test Case
   std::cout << std::endl << std::endl << separator
@@ -100,8 +104,8 @@ void test() {
             << separator << std::endl
             << "Expecting a successful run" << std::endl;
   huffman_content{
-          "../resources/lorem.txt"}
-          .statistics();
+          "../resources/lorem.txt"
+  }.statistics();
 }
 
 int main() {

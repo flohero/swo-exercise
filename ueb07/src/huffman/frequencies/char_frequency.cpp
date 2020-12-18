@@ -4,6 +4,7 @@
 
 #include <iomanip>
 #include "char_frequency.h"
+#include "../utils.h"
 
 namespace huffman {
   int char_frequency::count = 0;
@@ -71,25 +72,9 @@ namespace huffman {
    */
   std::string char_frequency::to_string() const {
     std::stringstream stream;
-    stream << "'";
-    switch (this->character) {
-      case '\n':
-        stream << "\\n";
-        break;
-      case '\t':
-        stream << "\\t";
-        break;
-      case '\r':
-        stream << "\\r";
-        break;
-      case '\0':
-        stream << "-";
-        break;
-      default:
-        stream << this->character;
-    }
+    stream << utils::escape_char_to_printable(this->character);
     double percent = (static_cast<double>(this->frequency) / static_cast<double>(this->total)) * 100;
-    stream << "': "
+    stream << ": "
            << std::fixed
            << std::setprecision(2)
            << percent
