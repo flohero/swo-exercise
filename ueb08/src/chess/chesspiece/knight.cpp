@@ -6,7 +6,7 @@
 
 namespace chess {
   knight::knight(chess::color c) :
-      chessman('n', c, false) {}
+      chessman(chessman_type::knight, c, false) {}
 
   void knight::available_moves(chessman **figure_board, position pos,
                                int size, bool *movement_board) const {

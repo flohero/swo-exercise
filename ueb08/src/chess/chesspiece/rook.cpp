@@ -12,6 +12,6 @@ namespace chess {
   }
 
   rook::rook(color c) :
-      chessman('r', c, false) {
+      chessman(chessman_type::rook, c, false) {
   }
 }

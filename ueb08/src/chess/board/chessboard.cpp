@@ -6,18 +6,15 @@
 #include <iomanip>
 #include "chessboard.h"
 #include "./chessboard_exception.h"
-#include "../chesspiece/rook.h"
-#include "../chesspiece/pawn.h"
-#include "../chesspiece/knight.h"
-#include "../chesspiece/king.h"
-#include "../chesspiece/bishop.h"
-#include "../chesspiece/queen.h"
+#include "../chessman_factory.h"
 
 #define MIN_CHESS_SIZE 8
 #define SEPARATOR "|"
 
 namespace chess {
-  chess::chessboard::chessboard() :
+  const std::string chessboard::chessman_freq = "rnbqkbnr";
+
+  chessboard::chessboard() :
       chessboard{MIN_CHESS_SIZE} {
   }
 
@@ -29,14 +26,8 @@ namespace chess {
 
     this->figure_board = new chessman *[static_cast<unsigned long>(size * size)]{nullptr};
     this->movement_board = new bool[static_cast<unsigned long>(size * size)]{false};
-    for (int i = 0; i < this->size; i++) {
-      this->figure_board[i] = new rook(color::white);
-      this->figure_board[this->size * this->size - i - 1] = new rook(color::black);
-      this->figure_board[this->size * this->size - this->size - i - 1] = new rook(color::black);
-    }
-    this->figure_board[43] = new rook(color::white);
-    this->selected_index = 43;
-    this->update_movement_board();
+    this->init_board(color::white);
+    this->init_board(color::black);
   }
 
   chessboard::~chessboard() {
@@ -47,7 +38,27 @@ namespace chess {
     delete[] this->movement_board;
   }
 
+  void chessboard::init_board(color c) {
+    int start = c == color::white ? 0 : this->size * this->size - this->size;
+    chessman_factory factory{c};
+    // pawns
+    for (int i = 0; i < this->size; i++) {
+      position pos{i, c == color::white ? 1 : this->size - 2};
+      const int idx = pos.to_one_dimension(this->size);
+      figure_board[idx] = factory.produce_chessman(chessman_type::pawn);
+    }
+    int idx = 0;
+    for (char type: chessboard::chessman_freq) {
+      figure_board[start + idx++] = factory.produce_chessman(chessman_type{type});
+    }
+  }
+
   void chessboard::update_movement_board() {
+    if (this->selected_index == -1) {
+      for (int i = 0; i < this->size * this->size; i++) {
+        movement_board[i] = false;
+      }
+    }
     auto current_figure = this->figure_board[this->selected_index];
     current_figure->available_moves(this->figure_board,
                                     position{this->selected_index % this->size, this->selected_index / this->size},

@@ -6,7 +6,7 @@
 
 namespace chess {
   king::king(chess::color c) :
-      chessman('k', c, true) {}
+      chessman(chessman_type::king, c, true) {}
 
   void king::available_moves(chessman **figure_board, position pos,
                              int size, bool *movement_board) const {

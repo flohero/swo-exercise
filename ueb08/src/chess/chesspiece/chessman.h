@@ -7,16 +7,18 @@
 #include <ostream>
 #include "../position/position.h"
 #include "../color.h"
+#include "chessman_type.h"
 
 namespace chess {
   class chessman {
   public:
-    chessman(char symbol, color fig_color, bool essential);
+    chessman(chessman_type symbol, color fig_color, bool essential);
 
     virtual ~chessman() = default;
 
     virtual void available_moves(chessman **figure_board, position pos,
                                  int size, bool *movement_board) const = 0;
+
 
     [[nodiscard]] color figure_color() const;
 
@@ -35,7 +37,7 @@ namespace chess {
 
     const color fig_color_;
   private:
-    const char symbol_;
+    const chessman_type symbol_;
     const bool essential_;
 
   };

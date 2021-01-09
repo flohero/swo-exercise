@@ -6,7 +6,7 @@
 
 namespace chess {
   queen::queen(chess::color c) :
-      chessman{'q', c, false} {}
+      chessman{chessman_type::queen, c, false} {}
 
   void queen::available_moves(chessman **figure_board, position pos, int size, bool *movement_board) const {
     this->common_movements(figure_board, pos, size, movement_board, direction::start, direction::end);

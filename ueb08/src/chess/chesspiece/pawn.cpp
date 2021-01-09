@@ -6,7 +6,7 @@
 
 namespace chess {
   pawn::pawn(chess::color c) :
-      chessman('p', c, false) {}
+      chessman(chessman_type::pawn, c, false) {}
 
   void pawn::available_moves(chessman **figure_board, position pos, int size, bool *movement_board) const {
     direction dir = this->fig_color_ == color::white ? direction::bottom : direction::top;

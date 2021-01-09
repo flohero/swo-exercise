@@ -5,7 +5,7 @@
 #include "chessman.h"
 
 namespace chess {
-  chessman::chessman(const char symbol, const color fig_color, bool essential) :
+  chessman::chessman(const chessman_type symbol, const color fig_color, bool essential) :
       symbol_{symbol}, fig_color_{fig_color}, essential_{essential} {
   }
 
@@ -18,9 +18,10 @@ namespace chess {
   }
 
   std::ostream &operator<<(std::ostream &os, const chess::chessman &man) {
+    char sym = static_cast<char>(man.symbol_);
     return os << char(man.fig_color_ == color::white
-                      ? toupper(man.symbol_)
-                      : tolower(man.symbol_));
+                      ? toupper(sym)
+                      : tolower(sym));
   }
 
   void chessman::move() {

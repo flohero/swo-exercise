@@ -26,6 +26,11 @@ namespace chess {
     bool *movement_board;
     int size;
     int selected_index = -1;
+    static const std::string chessman_freq;
+
+    void init_board(color c);
+
+    void update_movement_board();
 
     void print_cell(int figure, color field_color, bool selected, bool in_path) const;
 
@@ -37,7 +42,6 @@ namespace chess {
 
     void print_y_axis_at(int i) const;
 
-    void update_movement_board();
   };
 }
 

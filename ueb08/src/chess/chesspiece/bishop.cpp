@@ -6,7 +6,7 @@
 
 namespace chess {
   bishop::bishop(chess::color c) :
-      chessman('b', c, false) {}
+      chessman(chessman_type::bishop, c, false) {}
 
   void bishop::available_moves(chessman **figure_board, position pos,
                                int size, bool *movement_board) const {
