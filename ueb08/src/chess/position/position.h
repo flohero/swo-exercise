@@ -26,14 +26,6 @@ namespace chess {
 
     bool operator==(const position &pos) const;
 
-    [[nodiscard]] int x() const {
-      return x_;
-    }
-
-    [[nodiscard]] int y() const {
-      return y_;
-    }
-
   private:
     int x_;
     int y_;

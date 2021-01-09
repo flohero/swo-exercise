@@ -7,7 +7,6 @@
 namespace chess {
   position::position(int x, int y) :
       x_{x}, y_{y} {
-
   }
 
 
@@ -53,6 +52,8 @@ namespace chess {
       case direction::top_left:
         new_pos.x_ -= times;
         new_pos.y_ -= times;
+        break;
+      case direction::end:
         break;
     }
     return new_pos;

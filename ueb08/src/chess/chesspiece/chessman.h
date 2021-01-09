@@ -32,10 +32,12 @@ namespace chess {
     void common_movements(chessman **figure_board, position pos,
                           int size, bool *movement_board, direction start, direction end) const;
 
+
+    const color fig_color_;
   private:
     const char symbol_;
-    const color fig_color_;
     const bool essential_;
+
   };
 
   std::ostream &operator<<(std::ostream &os, const chessman &man);

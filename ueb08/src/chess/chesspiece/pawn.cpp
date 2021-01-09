@@ -9,8 +9,8 @@ namespace chess {
       chessman('p', c, false) {}
 
   void pawn::available_moves(chessman **figure_board, position pos, int size, bool *movement_board) const {
-    direction dir = this->figure_color() == color::white ? direction::bottom : direction::top;
-    color enemy = this->figure_color() == color::white ? color::black : color::white;
+    direction dir = this->fig_color_ == color::white ? direction::bottom : direction::top;
+    color enemy = this->fig_color_ == color::white ? color::black : color::white;
     const position &bot_pos = pos
         .go_to(dir, 1);
     int index = bot_pos

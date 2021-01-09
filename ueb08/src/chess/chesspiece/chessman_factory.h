@@ -4,9 +4,9 @@
 
 #pragma once
 
+namespace chess {
+  class chessman_factory {
 
-class chessman_factory {
-
-};
-
+  };
+}
 

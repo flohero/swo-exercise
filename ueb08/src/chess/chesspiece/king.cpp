@@ -21,7 +21,7 @@ namespace chess {
       if(curr_figure == nullptr) {
         movement_board[idx] = true;
       } else {
-        movement_board[idx] = curr_figure->figure_color() != this->figure_color();
+        movement_board[idx] = curr_figure->figure_color() != this->fig_color_;
       }
     }
   }
