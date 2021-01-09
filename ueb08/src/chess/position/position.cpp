@@ -19,6 +19,10 @@ namespace chess {
     return this->x_ + this->y_ * offset;
   }
 
+  bool position::is_in_matrix(const int size) const {
+    return this->x_ >= 0 && this->y_ >= 0 && this->x_ < size && this->y_ < size;
+  }
+
   position position::go_to(const direction dir, const int times) const {
     position new_pos{*this};
     switch (dir) {

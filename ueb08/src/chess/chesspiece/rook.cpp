@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include "rook.h"
-#include "../position/direction.h"
 
 namespace chess {
   void rook::available_moves(chessman **figure_board, position pos, int size, bool *movement_board) const {
@@ -46,6 +45,5 @@ namespace chess {
 
   rook::rook(color c) :
       chessman('r', c, false) {
-
   }
 }

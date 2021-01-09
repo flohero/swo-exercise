@@ -20,6 +20,8 @@ namespace chess {
 
     [[nodiscard]] int to_one_dimension(int offset) const;
 
+    [[nodiscard]] bool is_in_matrix(int size) const;
+
     [[nodiscard]] position go_to(direction dir, int times) const;
 
     bool operator==(const position &pos) const;
@@ -32,10 +34,9 @@ namespace chess {
       return y_;
     }
 
-  protected:
+  private:
     int x_;
     int y_;
-
   };
 }
 

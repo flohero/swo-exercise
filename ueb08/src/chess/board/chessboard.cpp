@@ -8,6 +8,7 @@
 #include "./chessboard_exception.h"
 #include "../chesspiece/rook.h"
 #include "../chesspiece/pawn.h"
+#include "../chesspiece/knight.h"
 
 #define MIN_CHESS_SIZE 8
 #define SEPARATOR "|"
@@ -30,8 +31,8 @@ namespace chess {
       this->figure_board[this->size * this->size - i - 1] = new rook(color::black);
       this->figure_board[this->size * this->size - this->size - i - 1] = new rook(color::black);
     }
-    this->figure_board[27] = new rook(color::white);
-    this->selected_index = 3;
+    this->figure_board[12] = new knight(color::white);
+    this->selected_index = 12;
     this->update_movement_board();
   }
 

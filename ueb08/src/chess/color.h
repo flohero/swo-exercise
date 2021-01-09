@@ -6,7 +6,7 @@
 
 namespace chess {
   enum class color {
-    white, black, none
+    white, black
   };
 }
 
