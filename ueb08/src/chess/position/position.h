@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "position_path.h"
+#include "direction.h"
 
 namespace chess {
   /**
@@ -12,23 +12,29 @@ namespace chess {
    */
   class position {
   public:
-    position() {
-      x = y = 0;
-    };
+    position() : x_{0}, y_{0} {};
+
+    position(const position &pos) = default;
 
     position(int x, int y);
 
-    position operator+(const position &pos) const;
+    [[nodiscard]] int to_one_dimension(int offset) const;
 
-    position operator-(const position &pos) const;
+    [[nodiscard]] position go_to(direction dir, int times) const;
 
     bool operator==(const position &pos) const;
 
-    [[nodiscard]] position_path path_to(const position &end) const;
+    [[nodiscard]] int x() const {
+      return x_;
+    }
+
+    [[nodiscard]] int y() const {
+      return y_;
+    }
 
   protected:
-    int x;
-    int y;
+    int x_;
+    int y_;
 
   };
 }
