@@ -34,7 +34,7 @@ namespace chess {
       this->figure_board[this->size * this->size - i - 1] = new rook(color::black);
       this->figure_board[this->size * this->size - this->size - i - 1] = new rook(color::black);
     }
-    this->figure_board[43] = new bishop(color::white);
+    this->figure_board[43] = new rook(color::white);
     this->selected_index = 43;
     this->update_movement_board();
   }

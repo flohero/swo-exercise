@@ -27,9 +27,9 @@ namespace chess {
     this->moved = true;
   }
 
-  void chessman::common_movments(chessman **figure_board, position pos,
-                                 int size, bool *movement_board,
-                                 direction start, direction end) const {
+  void chessman::common_movements(chessman **figure_board, position pos,
+                                  int size, bool *movement_board,
+                                  direction start, direction end) const {
     for (int i = static_cast<int>(start); i < static_cast<int>(end); i++) {
       bool stopped = false;
       direction dir{i};
