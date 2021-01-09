@@ -13,7 +13,9 @@ namespace chess {
     top_right = 4,
     bottom_right = 5,
     bottom_left = 6,
-    top_left = 7
+    top_left = 7,
+    start = top,
+    end = top_left + 1,
   };
 }
 
