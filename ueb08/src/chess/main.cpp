@@ -1,11 +1,11 @@
 //
 // Created by florian on 20.12.20.
 //
-#include "board/chessboard.h"
+#include "chess_engine.h"
 
 using namespace chess;
 
 int main() {
-  chessboard board{};
-  board.print();
+  chess_engine engine{10};
+  engine.loop();
 }

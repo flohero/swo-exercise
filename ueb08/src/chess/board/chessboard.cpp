@@ -9,6 +9,7 @@
 #include "../chessman_factory.h"
 
 #define MIN_CHESS_SIZE 8
+#define MAX_CHESS_SIZE 26
 #define SEPARATOR "|"
 
 namespace chess {
@@ -21,7 +22,10 @@ namespace chess {
   chessboard::chessboard(int size) :
       size{size} {
     if (this->size < MIN_CHESS_SIZE) {
-      throw chessboard_exception("Minimum size was undercut");
+      throw chessboard_exception{"Minimum size was undercut"};
+    }
+    if (this->size > MAX_CHESS_SIZE) {
+      throw chessboard_exception{"Size is bigger than maximum size of 26"};
     }
 
     this->figure_board = new chessman *[static_cast<unsigned long>(size * size)]{nullptr};
@@ -53,21 +57,64 @@ namespace chess {
     }
   }
 
+  void chessboard::select(const position &pos, const color c) {
+    int idx = pos.to_one_dimension(this->size);
+
+    if (!pos.is_in_matrix(this->size)) {
+      throw chessboard_exception{"Not a valid position"};
+    }
+    auto curr_figure = this->figure_board[idx];
+    if (curr_figure == nullptr) {
+      throw chessboard_exception{"No chesspiece on this position"};
+    }
+    if (curr_figure->figure_color() != c) {
+      throw chessboard_exception{"Color and color of chesspiece do not match"};
+    }
+    this->selected_index = idx;
+    update_movement_board();
+  }
+
+  void chessboard::unselect() {
+    this->selected_index = -1;
+    update_movement_board();
+  }
+
+  void chessboard::move_to(const position &pos) {
+    if (!pos.is_in_matrix(this->size)) {
+      throw chessboard_exception{"Not a valid position"};
+    }
+    int idx = pos.to_one_dimension(this->size);
+    if (this->movement_board[idx]) {
+      auto figure = this->figure_board[idx];
+      if(figure != nullptr) {
+        delete this->figure_board[idx];
+        this->figure_board[idx] = nullptr;
+      }
+      this->figure_board[idx] = this->figure_board[this->selected_index];
+      this->figure_board[this->selected_index] = nullptr;
+      unselect();
+    }
+  }
+
   void chessboard::update_movement_board() {
     if (this->selected_index == -1) {
       for (int i = 0; i < this->size * this->size; i++) {
         movement_board[i] = false;
       }
+    } else {
+      auto current_figure = this->figure_board[this->selected_index];
+      current_figure->available_moves(this->figure_board,
+                                      position{this->selected_index % this->size, this->selected_index / this->size},
+                                      this->size, movement_board);
     }
-    auto current_figure = this->figure_board[this->selected_index];
-    current_figure->available_moves(this->figure_board,
-                                    position{this->selected_index % this->size, this->selected_index / this->size},
-                                    this->size, movement_board);
   }
+
+  /* Print Methods*/
 
   void chessboard::print() const {
     int padding = static_cast<int>((" " + std::to_string(this->size)).length()) + 1;
     bool field = true;
+    std::cout << std::endl;
     this->print_x_axis(padding);
     for (int i = 0; i < this->size * this->size; i++) {
       bool is_selected = (i == this->selected_index);
@@ -91,6 +138,7 @@ namespace chess {
     }
     print_line(padding);
     print_x_axis(padding);
+    std::cout << std::endl;
   }
 
   void chessboard::print_cell(const int figure, const color field_color,
@@ -121,7 +169,7 @@ namespace chess {
       if (i != 0) {
         std::cout << " ";
       }
-      std::cout << " " << char('a' + i) << " ";
+      std::cout << " " << char('A' + i) << " ";
     }
     std::cout << SEPARATOR;
   }

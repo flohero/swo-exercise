@@ -19,7 +19,13 @@ namespace chess {
 
     ~chessboard();
 
+    void select(const position &pos, color c);
+
+    void unselect();
+
     void print() const;
+
+    void move_to(const position &pos);
 
   private:
     chessman **figure_board;
