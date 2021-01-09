@@ -29,6 +29,9 @@ namespace chess {
   protected:
     bool moved = false;
 
+    void common_movments(chessman **figure_board, position pos,
+                         int size, bool *movement_board, direction start, direction end) const;
+
   private:
     const char symbol_;
     const color fig_color_;
