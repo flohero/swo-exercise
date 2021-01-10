@@ -27,6 +27,10 @@ namespace chess {
 
     chessman * move_to(const position &pos);
 
+    void select_random_movable_figure(const color &c);
+
+    chessman *move_random();
+
   private:
     chessman **figure_board;
     bool *movement_board;
@@ -47,6 +51,8 @@ namespace chess {
     static void left_padding(int padding);
 
     void print_y_axis_at(int i) const;
+
+    int get_movable_count() const;
 
   };
 }

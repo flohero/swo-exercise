@@ -34,6 +34,8 @@ namespace chess {
     std::string get_current_player() const;
 
     static chess::play_mode splash_screen();
+
+    static void computer_wait() ;
   };
 }
 

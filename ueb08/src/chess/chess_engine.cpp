@@ -3,38 +3,55 @@
 //
 
 #include <iostream>
+#include <ctime>
+#include <thread>
 #include "chess_engine.h"
 #include "board/chessboard_exception.h"
 #include "play_mode.h"
 
 #define MIN_CHESS_SIZE 8
 
+#define WAIT_TIME 2000
 namespace chess {
   chess_engine::chess_engine() :
       chess_engine{MIN_CHESS_SIZE} {}
 
   chess_engine::chess_engine(int size) :
-      size{size}, board{this->size} {}
+      size{size}, board{this->size} {
+  }
 
   void chess_engine::loop() {
     bool ended = false;
-    chess_engine::splash_screen();
+    play_mode mode = chess_engine::splash_screen();
     while (!ended) {
       board.print();
       std::cout << get_current_player() << std::endl;
-      select_figure();
-      std::cout << get_current_player() << std::endl;
+      if(mode == play_mode::player) {
+        select_figure();
+      } else {
+        this->board.select_random_movable_figure(this->player);
+        computer_wait();
+      }
       board.print();
-      auto killed = this->move_figure();
+      std::cout << get_current_player() << std::endl;
+      chessman *killed = nullptr;
+      if(mode == play_mode::player) {
+        killed = this->move_figure();
+      } else {
+        killed = this->board.move_random();
+        computer_wait();
+      }
       if (killed != nullptr && killed->is_essential()) {
         ended = true;
-        get_current_player();
         std::cout << this->get_current_player() << " won!";
       } else {
         this->switch_player();
       }
+      delete killed;
     }
   }
+
+  void chess_engine::computer_wait() { std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_TIME)); }
 
   play_mode chess_engine::splash_screen() {
     std::cout << "   |\\_       Welcome to Chess" << std::endl
@@ -45,7 +62,7 @@ namespace chess {
               << " /_____\\     Rook:   " << static_cast<char>(chessman_type::rook) << std::endl
               << "[_______]    Pawn:   " << static_cast<char>(chessman_type::pawn) << std::endl
               << std::endl
-              << "Insert Play Mode (0) Player VS Player (1) Computer VS Computer";
+              << "Insert Play Mode (0) Player VS Player (1) Computer VS Computer:" << std::endl;
     bool success = false;
     play_mode mode;
     while (!success) {
@@ -54,8 +71,9 @@ namespace chess {
       try {
         int mode_int = std::stoi(mode_str);
         if (mode_int != 0 && mode_int != 1) {
-          mode = play_mode{mode_int};
+          throw std::invalid_argument{"Not a valid argument!"};
         }
+        mode = play_mode{mode_int};
         success = true;
       } catch (std::invalid_argument const &e) {
         std::cout << "Not a valid input" << std::endl;

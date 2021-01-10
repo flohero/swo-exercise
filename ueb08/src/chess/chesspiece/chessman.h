@@ -36,6 +36,7 @@ namespace chess {
 
 
     const color fig_color_;
+
   private:
     const chessman_type symbol_;
     const bool essential_;

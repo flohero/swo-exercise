@@ -4,6 +4,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <functional>
+#include <random>
 #include "chessboard.h"
 #include "./chessboard_exception.h"
 #include "../chessman_factory.h"
@@ -13,6 +15,7 @@
 #define SEPARATOR "|"
 
 namespace chess {
+  // In which frequency a chess board should be initialized
   const std::string chessboard::chessman_freq = "rnbqkbnr";
 
   chessboard::chessboard() :
@@ -52,7 +55,12 @@ namespace chess {
       figure_board[idx] = factory.produce_chessman(chessman_type::pawn);
     }
     int idx = 0;
-    for (char type: chessboard::chessman_freq) {
+    std::string long_freq;
+    for(int i = 0; i < this->size; i++) {
+      char char_at = chessboard::chessman_freq.at(static_cast<unsigned long>(i) % chessboard::chessman_freq.length());
+      long_freq.push_back(char_at);
+    }
+    for (char type: long_freq) {
       figure_board[start + idx++] = factory.produce_chessman(chessman_type{type});
     }
   }
@@ -72,21 +80,33 @@ namespace chess {
     }
     this->selected_index = idx;
     this->update_movement_board();
-    int movement_count = 0;
-    for(int i = 0; i < this->size * this->size; i++) {
-      if(this->movement_board[i]) {
-        movement_count++;
-      }
-    }
-    if(movement_count== 0) {
+    if (get_movable_count() == 0) {
       throw chessboard_exception{"No movements available"};
     }
   }
 
+  /**
+   * Unselect the current figure.
+   * The movement_board will be updated
+   */
   void chessboard::unselect() {
     this->selected_index = -1;
     update_movement_board();
   }
+
+  /**
+   * @return the count of available fields a figure can move to
+   */
+  int chessboard::get_movable_count() const {
+    int movement_count = 0;
+    for (int i = 0; i < size * size; i++) {
+      if (movement_board[i]) {
+        movement_count++;
+      }
+    }
+    return movement_count;
+  }
+
 
   /**
    * Moves an already selected figure to a position.
@@ -103,6 +123,56 @@ namespace chess {
     if (!this->movement_board[idx]) {
       throw chessboard_exception{"Not a valid position"};
     }
+    auto figure = this->figure_board[idx];
+
+    if (figure != nullptr) {
+      killed = this->figure_board[idx];
+      this->figure_board[idx] = nullptr;
+    }
+    this->figure_board[this->selected_index]->move();
+    this->figure_board[idx] = this->figure_board[this->selected_index];
+    this->figure_board[this->selected_index] = nullptr;
+    unselect();
+    return killed;
+  }
+
+  /**
+   * Selects a random movable figure matching the provided color
+   * @param c which color the figure should have
+   */
+  void chessboard::select_random_movable_figure(const color &c) {
+    // count figures of color c
+    auto gen = std::bind(std::uniform_int_distribution<>(0, 1), std::default_random_engine());
+    bool found = false;
+    for (int i = 0; !found; i++) {
+      this->unselect();
+      int new_idx = i % (this->size * this->size);
+      if (this->figure_board[new_idx] != nullptr
+          && this->figure_board[new_idx]->figure_color() == c) {
+        this->selected_index = new_idx;
+        this->update_movement_board();
+        if (this->get_movable_count() > 0 && gen()) {
+          this->selected_index = new_idx;
+          found = true;
+        }
+      }
+    }
+  }
+
+  chessman *chessboard::move_random() {
+    bool found_move = false;
+    update_movement_board();
+    auto gen = std::bind(std::uniform_int_distribution<>(0, 1), std::default_random_engine());
+    int idx = 0;
+    for (int i = 0; !found_move; i++) {
+      if (this->movement_board[i % (this->size * this->size)]) {
+        if (gen()) {
+          idx = i % (this->size * this->size);
+          found_move = true;
+        }
+      }
+    }
+    chessman *killed = nullptr;
     auto figure = this->figure_board[idx];
 
     if (figure != nullptr) {
