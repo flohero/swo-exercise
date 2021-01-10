@@ -25,7 +25,7 @@ namespace chess {
 
     void print() const;
 
-    void move_to(const position &pos);
+    chessman * move_to(const position &pos);
 
   private:
     chessman **figure_board;

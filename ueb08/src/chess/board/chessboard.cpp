@@ -68,10 +68,19 @@ namespace chess {
       throw chessboard_exception{"No chesspiece on this position"};
     }
     if (curr_figure->figure_color() != c) {
-      throw chessboard_exception{"Color and color of chesspiece do not match"};
+      throw chessboard_exception{"Your color and color of chesspiece do not match"};
     }
     this->selected_index = idx;
-    update_movement_board();
+    this->update_movement_board();
+    int movement_count = 0;
+    for(int i = 0; i < this->size * this->size; i++) {
+      if(this->movement_board[i]) {
+        movement_count++;
+      }
+    }
+    if(movement_count== 0) {
+      throw chessboard_exception{"No movements available"};
+    }
   }
 
   void chessboard::unselect() {
@@ -79,21 +88,32 @@ namespace chess {
     update_movement_board();
   }
 
-  void chessboard::move_to(const position &pos) {
+  /**
+   * Moves an already selected figure to a position.
+   * If there is an enemy figure on the destination position it will be killed.
+   * @param pos the destination position
+   * @returns if an essential enemy figure was hit
+   */
+  chessman *chessboard::move_to(const position &pos) {
+    chessman *killed = nullptr;
     if (!pos.is_in_matrix(this->size)) {
       throw chessboard_exception{"Not a valid position"};
     }
     int idx = pos.to_one_dimension(this->size);
-    if (this->movement_board[idx]) {
-      auto figure = this->figure_board[idx];
-      if(figure != nullptr) {
-        delete this->figure_board[idx];
-        this->figure_board[idx] = nullptr;
-      }
-      this->figure_board[idx] = this->figure_board[this->selected_index];
-      this->figure_board[this->selected_index] = nullptr;
-      unselect();
+    if (!this->movement_board[idx]) {
+      throw chessboard_exception{"Not a valid position"};
     }
+    auto figure = this->figure_board[idx];
+
+    if (figure != nullptr) {
+      killed = this->figure_board[idx];
+      this->figure_board[idx] = nullptr;
+    }
+    this->figure_board[this->selected_index]->move();
+    this->figure_board[idx] = this->figure_board[this->selected_index];
+    this->figure_board[this->selected_index] = nullptr;
+    unselect();
+    return killed;
   }
 
   void chessboard::update_movement_board() {

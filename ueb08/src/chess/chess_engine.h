@@ -5,6 +5,7 @@
 #pragma once
 
 #include "board/chessboard.h"
+#include "play_mode.h"
 
 namespace chess {
   class chess_engine {
@@ -16,9 +17,23 @@ namespace chess {
     void loop();
 
   private:
+    int size;
+
     chessboard board;
 
-    position input_position();
+    color player = color::white;
+
+    position input_position() const;
+
+    void select_figure();
+
+    void switch_player();
+
+    chessman * move_figure();
+
+    std::string get_current_player() const;
+
+    static chess::play_mode splash_screen();
   };
 }
 

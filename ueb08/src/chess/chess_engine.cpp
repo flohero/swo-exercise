@@ -5,6 +5,7 @@
 #include <iostream>
 #include "chess_engine.h"
 #include "board/chessboard_exception.h"
+#include "play_mode.h"
 
 #define MIN_CHESS_SIZE 8
 
@@ -13,37 +14,105 @@ namespace chess {
       chess_engine{MIN_CHESS_SIZE} {}
 
   chess_engine::chess_engine(int size) :
-      board{size} {}
+      size{size}, board{this->size} {}
 
   void chess_engine::loop() {
     bool ended = false;
-    bool gamer = true;
-    board.print();
-    do {
-      position pos = input_position();
+    chess_engine::splash_screen();
+    while (!ended) {
+      board.print();
+      std::cout << get_current_player() << std::endl;
+      select_figure();
+      std::cout << get_current_player() << std::endl;
+      board.print();
+      auto killed = this->move_figure();
+      if (killed != nullptr && killed->is_essential()) {
+        ended = true;
+        get_current_player();
+        std::cout << this->get_current_player() << " won!";
+      } else {
+        this->switch_player();
+      }
+    }
+  }
+
+  play_mode chess_engine::splash_screen() {
+    std::cout << "   |\\_       Welcome to Chess" << std::endl
+              << "  /  .\\_     King:   " << static_cast<char>(chessman_type::king) << std::endl
+              << " |   ___)    Queen:  " << static_cast<char>(chessman_type::queen) << std::endl
+              << " |    \\      Bishop: " << static_cast<char>(chessman_type::bishop) << std::endl
+              << " |  =  |     Knight: " << static_cast<char>(chessman_type::knight) << std::endl
+              << " /_____\\     Rook:   " << static_cast<char>(chessman_type::rook) << std::endl
+              << "[_______]    Pawn:   " << static_cast<char>(chessman_type::pawn) << std::endl
+              << std::endl
+              << "Insert Play Mode (0) Player VS Player (1) Computer VS Computer";
+    bool success = false;
+    play_mode mode;
+    while (!success) {
+      std::string mode_str;
+      std::cin >> mode_str;
       try {
-        board.select(pos, gamer ? color::white : color::black);
-      } catch (chessboard_exception &e) {
-        std::cout << e.what() << std::endl;
+        int mode_int = std::stoi(mode_str);
+        if (mode_int != 0 && mode_int != 1) {
+          mode = play_mode{mode_int};
+        }
+        success = true;
+      } catch (std::invalid_argument const &e) {
+        std::cout << "Not a valid input" << std::endl;
         continue;
       }
-      board.print();
-      pos = input_position();
-      this->board.move_to(pos);
-      board.print();
-      gamer = false;
-      ended = true;
-    } while (!ended);
+      catch (std::out_of_range const &e) {
+        std::cout << "Not a valid input" << std::endl;
+        continue;
+      }
+    }
+    return mode;
+  }
+
+  std::string chess_engine::get_current_player() const {
+    return player == color::white ? "Player White" : "Player Black";
+  }
+
+  void chess_engine::select_figure() {
+    bool selected = false;
+    while (!selected) {
+      position pos = input_position();
+      try {
+        board.select(pos, this->player);
+        selected = true;
+      } catch (chessboard_exception &e) {
+        std::cout << e.what() << std::endl;
+      }
+    }
+  }
+
+  chessman *chess_engine::move_figure() {
+    bool selected = false;
+    chessman *killed;
+    while (!selected) {
+      position pos = input_position();
+      try {
+        killed = board.move_to(pos);
+        selected = true;
+      } catch (chessboard_exception &e) {
+        std::cout << e.what() << std::endl;
+      }
+    }
+    return killed;
+  }
+
+  void chess_engine::switch_player() {
+    player = this->player == color::white ? color::black : color::white;
   }
 
   static const char *const not_a_valid_pos = "Not a valid position try again!";
 
-  position chess_engine::input_position() {
+  position chess_engine::input_position() const {
     bool success = false;
     position pos;
-    do {
+    while (!success) {
       std::string coord;
-      std::cout << "Input the coordinates of the chessfigure you'd like to pick up (Example: C4):" << std::endl;
+      std::cout << "Input coordinates (Example: C4):" << std::endl;
       std::cin >> coord;
       if (coord.length() < 2) {
         std::cout << not_a_valid_pos << std::endl;
@@ -58,6 +127,10 @@ namespace chess {
       int y;
       try {
         y = std::stoi(y_str);
+        pos = position{x - 'A', this->size - y};
+        if (!pos.is_in_matrix(size)) {
+          throw std::invalid_argument{not_a_valid_pos};
+        }
       } catch (std::invalid_argument const &e) {
         std::cout << not_a_valid_pos << std::endl;
         continue;
@@ -67,9 +140,7 @@ namespace chess {
         continue;
       }
       success = true;
-      // TODO Counting in the wrong direction
-      pos = position{x - 'A', y - 1};
-    } while (!success);
+    }
     return pos;
   }
 }

@@ -6,6 +6,6 @@
 using namespace chess;
 
 int main() {
-  chess_engine engine{10};
+  chess_engine engine{};
   engine.loop();
 }
