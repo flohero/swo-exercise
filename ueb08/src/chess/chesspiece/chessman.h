@@ -31,11 +31,10 @@ namespace chess {
   protected:
     bool moved = false;
 
+    const color fig_color_;
+
     void common_movements(chessman **figure_board, position pos,
                           int size, bool *movement_board, direction start, direction end) const;
-
-
-    const color fig_color_;
 
   private:
     const chessman_type symbol_;

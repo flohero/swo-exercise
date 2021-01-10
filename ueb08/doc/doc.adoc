@@ -1,0 +1,519 @@
+= Abgabe 08: Chess
+:author: Florian Weingartshofer
+:email: <S1910307103@students.fh-hagenberg.at>
+:reproducible:
+:experimental:
+:listing-caption: Listing
+:source-highlighter: rouge
+:sourcedir: ../src/chess
+:imgdir: ./img
+:toc:
+:toclevels: 4
+
+<<<
+== Lösungsidee
+
+.Klassen-Diagram, für mehr Lesbarkeit wurden bestimmte Schlüsselwörter, wie `const`, weggelassen
+[plantuml,diagram-classes,png]
+....
+abstract class chessman {
+    - chessman_type symbol_
+    - essential_
+    # moved = false
+    # color fig_color_
+
+    + chessman(chessman_type symbol, color fig_color, bool essential)
+    + {abstract} \~chessman()
+    + {abstract} void available_moves(chessman **figure_board, position pos, int size, bool *movement_board)
+    + color figure_color()
+    + bool is_essential()
+    + void move()
+    + friend std::ostream &operator<<(std::ostream &os, const chessman &man)
+    # void common_movements(chessman **figure_board, position pos,
+ int size, bool *movement_board, direction start, direction end)
+}
+
+class king {
+    + king(color c)
+    + void void available_moves(chessman **figure_board, position pos, int size, bool *movement_board)
+}
+
+class queen {
+    + queen(color c)
+    + void void available_moves(chessman **figure_board, position pos, int size, bool *movement_board)
+}
+
+class bishop {
+    + bishop(color c)
+    + void void available_moves(chessman **figure_board, position pos, int size, bool *movement_board)
+}
+
+class knight {
+    + knight(color c)
+    + void void available_moves(chessman **figure_board, position pos, int size, bool *movement_board)
+}
+
+class rook {
+    + rook(color c)
+    + void void available_moves(chessman **figure_board, position pos, int size, bool *movement_board)
+}
+
+class pawn {
+    + pawn(color c)
+    + void void available_moves(chessman **figure_board, position pos, int size, bool *movement_board)
+}
+
+class chessman_factory {
+    - color c
+    + chessman_factory(color c)
+    + chessman *produce_chessman(chessman_type type)
+}
+
+class chessboard {
+    - chessman **figure_board
+    - bool *movement_board
+    - int size
+    - int selected_index = -1
+    - {static} string chessman_freq
+    - void init_board(color c)
+    - void update_movement_board()
+    - void print_cell(int figure, color field_color, bool selected, bool in_path)
+    - void print_line(int padding)
+    - void print_x_axis(int i)
+    - int get_movable_count()
+    + chessboard()
+    + \~chessboard()
+    + void select(position pos, color c)
+    + void unselect()
+    + void print()
+    + chessman *move_tio(position pos)
+    + void select_random_movable_figure(color c)
+    + chessman *move_random()
+}
+
+class chessboard_exception {
+    - string msg
+    + chessboard_exception(string msg)
+    + char *what()
+}
+
+class chess_engine {
+    - int size
+    - chessboard board
+    - color player = white
+    - position input_position()
+    - void select_figure()
+    - void switch_player()
+    - chessman *move_figure()
+    - string get_current_player()
+    - void computer_wait()
+    - {static} play_mode splash_screen()
+}
+
+class position {
+    - int x_
+    - int y_
+    + position()
+    + position(int x, int y)
+    + int to_one_dimension(int offset)
+    + bool is_in_matrix(int size)
+    + position go_to(direction dir, int times)
+}
+
+enum color {
+    white,
+    black
+}
+
+enum chessman_type {
+    king,
+    queen,
+    bishop,
+    knight,
+    rook,
+    pawn
+}
+
+enum direction {
+    top
+    bottom
+    right
+    left
+    top_right
+    bottom_right
+    bottom_left
+    top_left
+}
+
+enum play_mode {
+    player
+    comp
+}
+
+chessman --|> king
+chessman --|> queen
+chessman --|> bishop
+chessman --|> knight
+chessman --|> rook
+chessman --|> pawn
+
+chessman_type <-- chessman: erhält
+chessman_type <-- king: erzeugt
+chessman_type <-- queen: erzeugt
+chessman_type <-- bishop: erzeugt
+chessman_type <-- knight: erzeugt
+chessman_type <-- rook: erzeugt
+chessman_type <-- pawn: erzeugt
+
+color <-- chessman: erhält
+chessman --> position: erhält
+chessman --> direction: erzeugt
+
+position --> direction: erhält
+
+chessman_factory --> chessman: erzeugt
+
+chessboard --> chessman_factory: erzeugt
+chessboard --> chessboard_exception: erzeugt
+
+chess_engine --> chessboard: erzeugt
+chess_engine --> play_mode: erzeugt
+....
+
+=== chessman
+
+Repräsentiert eine Schachfigur, hat eine abstrakte Methode, welche die verfügbaren Positionen auf einem Schachbrett markiert.
+
+Hat eine Methode für ähnliche Bewegungsabläufe, speziell sind das Queen, Bishop und Rook.
+Deren Bewegungsmuster ist im Endeffekt ident, bis auf die verfügbaren Richtungen.
+
+==== King
+
+Kann in jede Richtung genau ein Feld fahren
+
+==== Queen
+
+Kann in jede Richtung unbegrenzt fahren, sollte kein Hindernis im Weg sein.
+
+==== Bishop
+
+Kann diagonal in jede Richtung unbegrenzt fahren, sollte kein Hindernis im Weg sein.
+
+==== Knight
+
+Kann in jede Richtung genau zwei Felder und dann 90° zu diesen fahren.
+Springt über Hindernisse.
+
+==== Rook
+
+Kann vertikal und horizontal unbegrenzt fahren, sollte kein Hindernis im Weg sein.
+
+==== Pawn
+
+Kann beim ersten mal bewegen maximal zwei Felder nach vorne fahren, sonst nur eines, schlägt schräg diagonal nach vorne.
+
+=== chessman_factory
+
+Implementiert das Factory Pattern.
+Erzeugt die verschiedenen Sub-Klassen von chessman, mit einer spezifizierten Farbe.
+
+=== chessboard
+
+Repräsentiert ein Schachbrett mit den Positionen einer Figur und die möglichen Züge einer ausgewählten Figur.
+Das Schachbrett ist ein normaler Array, wobei die verschiedenen Positionen in X und Y Koordinaten umgerechnet werden.
+Die möglichen Züge einer Figur werden in einem eigenem Array gespeichert.
+Dessen Größe ist ident mit dem des Schachbrett-Arrays, dadurch ist ein einfacher Zugriff gewährleistet.
+
+Die Mindestgröße liegt bei 8 um alle Schachfiguren auf dem Spielbrett unterzubringen und die Maximalgröße bei 26, da mir sonst die Buchstaben ausgehen und dies erheblich zur Lesbarkeit beiträgt.
+Bei mehr als 8 Feldern pro Seite, wird die Schachaufstellung von vorner begonnen und die Bauern werden einfach aufegfüllt , also:
+
+`Rook - Knight - Bishop - Queen - King - Bishop - Knight - Rook`.
+
+Um die Ausgabe ein wenig lesbarer zu machen wurden weiße Felder mit dem ASCII BEAM Symbol gekennzeichnet, anstatt mit Asterisks und Punkten.
+
+== Source Code
+
+.direction.h
+[source,cpp]
+----
+include::{sourcedir}/position/direction.h[]
+----
+
+.position.h
+[source,cpp]
+----
+include::{sourcedir}/position/position.h[]
+----
+
+.position.cpp
+[source,cpp]
+----
+include::{sourcedir}/position/position.cpp[]
+----
+
+.color.h
+[source,cpp]
+----
+include::{sourcedir}/color.h[]
+----
+
+.play_mode.h
+[source,cpp]
+----
+include::{sourcedir}/play_mode.h[]
+----
+
+.chessboard_exception.h
+[source,cpp]
+----
+include::{sourcedir}/board/chessboard_exception.h[]
+----
+
+.chessboard.h
+[source,cpp]
+----
+include::{sourcedir}/board/chessboard.h[]
+----
+
+.chessboard.cpp
+[source,cpp]
+----
+include::{sourcedir}/board/chessboard.cpp[]
+----
+
+.chessman.h
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/chessman.h[]
+----
+
+.chessman.cpp
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/chessman.cpp[]
+----
+
+.king.h
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/king.h[]
+----
+
+.king.cpp
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/king.cpp[]
+----
+
+.queen.h
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/queen.h[]
+----
+
+.queen.cpp
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/queen.cpp[]
+----
+
+.bishop.h
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/bishop.h[]
+----
+
+.bishop.cpp
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/bishop.cpp[]
+----
+
+.knight.h
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/knight.h[]
+----
+
+.knight.cpp
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/knight.cpp[]
+----
+
+.rook.h
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/rook.h[]
+----
+
+.rook.cpp
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/rook.cpp[]
+----
+
+.rook.h
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/rook.h[]
+----
+
+.pawn.cpp
+[source,cpp]
+----
+include::{sourcedir}/chesspiece/pawn.cpp[]
+----
+
+== Test-Cases
+
+*Achtung: Farben sind invertiert!*
+
+*@Reviewer: Sorry wegen der langen Test-Cases :)*
+
+=== Standard Board
+
+Command:
+`chess`
+
+Es wird ein normales Schachbrett(8x8) erwartet.
+
+.8x8 Board
+[source]
+----
+   | A   B   C   D   E   F   G   H |
+   +---+---+---+---+---+---+---+---+
+ 8 |█R█| N |█B█| Q |█K█| B |█N█| R | 8
+   +---+---+---+---+---+---+---+---+
+ 7 | P |█P█| P |█P█| P |█P█| P |█P█| 7
+   +---+---+---+---+---+---+---+---+
+ 6 |███|   |███|   |███|   |███|   | 6
+   +---+---+---+---+---+---+---+---+
+ 5 |   |███|   |███|   |███|   |███| 5
+   +---+---+---+---+---+---+---+---+
+ 4 |███|   |███|   |███|   |███|   | 4
+   +---+---+---+---+---+---+---+---+
+ 3 |   |███|   |███|   |███|   |███| 3
+   +---+---+---+---+---+---+---+---+
+ 2 |█p█| p |█p█| p |█p█| p |█p█| p | 2
+   +---+---+---+---+---+---+---+---+
+ 1 | r |█n█| b |█q█| k |█b█| n |█r█| 1
+   +---+---+---+---+---+---+---+---+
+   | A   B   C   D   E   F   G   H |
+----
+
+image::img/8x8.png[8x8 Board]
+
+=== 26x26 Board
+
+Command:
+`chess 26`
+
+Es wird ein Schachbrett mit Maximalgröße erwartet.
+
+image::img/26x26.png[26x26 Board]
+
+=== Schachbrett zu klein
+
+Command:
+`chess 4`
+
+Es wird eine Fehlerausgabe erwartet.
+
+.Zu Klein
+[source]
+----
+Minimum size was undercut
+----
+
+image::img/min.png[Zu Klein]
+
+.Valgrind chess 4
+[source]
+----
+valgrind --tool=memcheck --leak-check=full --leak-resolution=med --track-origins=yes --vgdb=no -s ./chess 4
+==57872== Memcheck, a memory error detector
+==57872== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==57872== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==57872== Command: ./chess 4
+==57872==
+Minimum size was undercut==57872==
+==57872== HEAP SUMMARY:
+==57872==     in use at exit: 0 bytes in 0 blocks
+==57872==   total heap usage: 4 allocs, 4 frees, 73,922 bytes allocated
+==57872==
+==57872== All heap blocks were freed -- no leaks are possible
+==57872==
+==57872== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Schachbrett zu groß
+
+Command:
+`chess 27`
+
+Es wird eine Fehlerausgabe erwartet.
+
+.Zu Groß
+[source]
+----
+Size is bigger than maximum size of 26
+----
+
+image::img/max.png[Zu Groß]
+
+.Valgrind chess 27
+[source]
+----
+==58516== Memcheck, a memory error detector
+==58516== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==58516== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==58516== Command: ./chess 27
+==58516==
+Size is bigger than maximum size of 26==58516==
+==58516== HEAP SUMMARY:
+==58516==     in use at exit: 0 bytes in 0 blocks
+==58516==   total heap usage: 4 allocs, 4 frees, 73,935 bytes allocated
+==58516==
+==58516== All heap blocks were freed -- no leaks are possible
+==58516==
+==58516== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== Üblicher Spielablauf bei Spieler gegen Spieler mit fehlerhaften Eingaben
+
+Es wurden einige fehlerhafte Eingaben getätigt und ein ganzer Spielablauf simuliert.
+
+.Simuliertes Schachspiel
+[source]
+----
+include::./round.txt[]
+----
+
+image::img/round.png[Spielablauf]
+
+Da das zugehörige Bild zu groß für die Ausgabe ist, bitte im zugehörigen `img` Folder das Bild `round.png` öffnen.
+
+=== Computer-Simulation
+
+Ein Computer Simulation des Schachspiels.
+Allerdings wurde die Wartezeit zwischen den Zügen heruntergesetzt.
+Hier war es leider nicht möglich ein vernünftiges Bild einzufügen, da es durch die zufällig erstellten Schachzüge zu viel Ausgabe wurde.
+
+.Computer Simuliertes Schachspiel
+[source]
+----
+include::./comp_round.txt[]
+----
+
+.Valgrind Computer Simuliertes Schachspiel
+[source]
+----
+==61746== HEAP SUMMARY:
+==61746==     in use at exit: 0 bytes in 0 blocks
+==61746==   total heap usage: 37 allocs, 37 frees, 76,096 bytes allocated
+==61746==
+==61746== All heap blocks were freed -- no leaks are possible
+==61746==
+==61746== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----

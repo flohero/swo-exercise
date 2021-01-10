@@ -25,7 +25,7 @@ namespace chess {
 
     void print() const;
 
-    chessman * move_to(const position &pos);
+    chessman *move_to(const position &pos);
 
     void select_random_movable_figure(const color &c);
 
@@ -52,7 +52,7 @@ namespace chess {
 
     void print_y_axis_at(int i) const;
 
-    int get_movable_count() const;
+    [[nodiscard]] int get_movable_count() const;
 
   };
 }

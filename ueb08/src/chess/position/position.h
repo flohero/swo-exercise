@@ -14,8 +14,6 @@ namespace chess {
   public:
     position() : x_{0}, y_{0} {};
 
-    position(const position &pos) = default;
-
     position(int x, int y);
 
     [[nodiscard]] int to_one_dimension(int offset) const;

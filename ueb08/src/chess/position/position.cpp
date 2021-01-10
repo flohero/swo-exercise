@@ -14,14 +14,31 @@ namespace chess {
     return this->x_ == pos.x_ && this->y_ == pos.y_;
   }
 
+  /**
+   * Calculate the position in an array
+   * @param offset size of matrix
+   * @return the index in an array
+   */
   int position::to_one_dimension(const int offset) const {
     return this->x_ + this->y_ * offset;
   }
 
+  /**
+   * Check if position is in a matrix
+   * @param size x and y axis
+   * @return if the position is in a matrix
+   */
   bool position::is_in_matrix(const int size) const {
     return this->x_ >= 0 && this->y_ >= 0 && this->x_ < size && this->y_ < size;
   }
 
+  /**
+   * Move the position in a specific direction,
+   * can be done multiple times
+   * @param dir which direction
+   * @param times how often
+   * @return a new position
+   */
   position position::go_to(const direction dir, const int times) const {
     position new_pos{*this};
     switch (dir) {

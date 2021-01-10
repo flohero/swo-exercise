@@ -7,6 +7,8 @@
 #include "board/chessboard.h"
 #include "play_mode.h"
 
+#define MIN_CHESS_SIZE 8
+
 namespace chess {
   class chess_engine {
   public:
@@ -23,19 +25,19 @@ namespace chess {
 
     color player = color::white;
 
-    position input_position() const;
+    [[nodiscard]] position input_position() const;
 
     void select_figure();
 
     void switch_player();
 
-    chessman * move_figure();
+    chessman *move_figure();
 
-    std::string get_current_player() const;
+    [[nodiscard]] std::string get_current_player() const;
 
     static chess::play_mode splash_screen();
 
-    static void computer_wait() ;
+    static void computer_wait();
   };
 }
 

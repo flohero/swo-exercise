@@ -6,7 +6,7 @@
 
 namespace chess {
   chessman::chessman(const chessman_type symbol, const color fig_color, bool essential) :
-      symbol_{symbol}, fig_color_{fig_color}, essential_{essential} {
+      fig_color_{fig_color}, symbol_{symbol}, essential_{essential} {
   }
 
   color chessman::figure_color() const {
@@ -24,6 +24,9 @@ namespace chess {
                       : tolower(sym));
   }
 
+  /**
+   * Change the state of the chessman to moved
+   */
   void chessman::move() {
     this->moved = true;
   }

@@ -3,15 +3,13 @@
 //
 
 #include <iostream>
-#include <ctime>
 #include <thread>
 #include "chess_engine.h"
 #include "board/chessboard_exception.h"
 #include "play_mode.h"
 
-#define MIN_CHESS_SIZE 8
 
-#define WAIT_TIME 2000
+#define WAIT_TIME 20
 namespace chess {
   chess_engine::chess_engine() :
       chess_engine{MIN_CHESS_SIZE} {}

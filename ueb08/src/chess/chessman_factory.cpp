@@ -31,9 +31,4 @@ namespace chess {
         return new pawn(this->c);
     }
   }
-
-  void chessman_factory::change_color(const color new_color) {
-    this->c = new_color;
-  }
-
 }

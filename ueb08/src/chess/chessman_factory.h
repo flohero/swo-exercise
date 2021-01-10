@@ -16,8 +16,6 @@ namespace chess {
 
   private:
     color c;
-
-    void change_color(color c);
   };
 }
 
