@@ -1,7 +1,6 @@
 //
 // Created by florian on 14.01.21.
 //
-
 #include "deque.h"
 
 #define DEFAULT_SIZE 256
@@ -15,7 +14,7 @@ namespace swo {
    * @param count the maximal amount of elements the deque can hold
    */
   template<typename T>
-  deque<T>::deque(deque::size_type count) {
+  deque<T>::deque(size_type count): capacity{count}, head{capacity}, tail{capacity} {
     // Check if count is bigger than zero, even though size_t can be negative since it is unsigned
     if (count <= MIN_SIZE) {
       throw std::invalid_argument("Count must be bigger than " + std::to_string(MIN_SIZE));
@@ -36,8 +35,9 @@ namespace swo {
    */
   template<typename T>
   deque<T>::deque(size_type count, T const &value) : deque{count} {
-    this->buffer_empty = false;
-    // TODO insert value as default element
+    for (size_type i = 0; i < count; i++) {
+      push_back(value);
+    }
   }
 
   /**
@@ -59,4 +59,26 @@ namespace swo {
   bool deque<T>::empty() const noexcept {
     return this->buffer_empty;
   }
+
+  template<typename T>
+  void deque<T>::push_back(const T &value) {
+    if (this->empty()) {
+      this->buffer_empty = false;
+      this->buffer[this->tail()] = value;
+    } else {
+      this->buffer[--this->tail] = value;
+    }
+  }
+
+  template<typename T>
+  typename deque<T>::size_type deque<T>::size() const noexcept {
+    // TODO implement
+    return 0;
+  }
+
+  template
+  class deque<std::string>;
+
+  template
+  class deque<int>;
 }

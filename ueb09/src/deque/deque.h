@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <iterator>
+#include "loop_back_counter.h"
 
 namespace swo {
 
@@ -27,6 +28,7 @@ namespace swo {
     using size_type = std::size_t;
     using value_type = T;
 
+    /*
     friend bool operator==(deque const &lhs, deque const &rhs) noexcept;
 
     friend bool operator!=(deque const &lhs, deque const &rhs) noexcept;
@@ -38,7 +40,7 @@ namespace swo {
     friend bool operator>(deque const &lhs, deque const &rhs) noexcept;
 
     friend bool operator>=(deque const &lhs, deque const &rhs) noexcept;
-
+    */
     friend void swap(deque<T> &a, deque<T> &b) noexcept {
       a.swap(b);
     }
@@ -50,7 +52,7 @@ namespace swo {
       using pointer = T *;
       using reference = T &;
       using value_type = T;
-
+      /*
       friend bool operator==(iterator const &lhs, iterator const &rhs) noexcept;
 
       friend bool operator!=(iterator const &lhs, iterator const &rhs) noexcept;
@@ -62,7 +64,7 @@ namespace swo {
       friend bool operator>(iterator const &lhs, iterator const &rhs) noexcept;
 
       friend bool operator>=(iterator const &lhs, iterator const &rhs) noexcept;
-
+      */
       friend iterator operator+(iterator itor, difference_type offset) noexcept {
         return itor += offset;
       }
@@ -70,7 +72,7 @@ namespace swo {
       friend iterator operator-(iterator itor, difference_type offset) noexcept {
         return itor -= offset;
       }
-
+      /*
       iterator();
 
       iterator(iterator const &src);
@@ -96,6 +98,7 @@ namespace swo {
       iterator &operator+=(difference_type offset) noexcept;
 
       iterator &operator-=(difference_type offset) noexcept;
+       */
     };
 
     deque();
@@ -103,15 +106,15 @@ namespace swo {
     explicit deque(size_type count);
 
     deque(size_type count, T const &value);
-
+    /*
     deque(deque const &src);
 
     deque(deque &&src) noexcept;
 
     deque(std::initializer_list<T> init);
-
+    */
     ~deque();
-
+    /*
     deque &operator=(deque const &src);
 
     deque &operator=(deque &&src) noexcept;
@@ -137,15 +140,15 @@ namespace swo {
     iterator begin() noexcept;
 
     iterator end() noexcept;
-
+    */
     bool empty() const noexcept;
 
     size_type size() const noexcept;
-
+    /*
     void clear() noexcept;
-
+    */
     void push_back(T const &value);
-
+    /*
     void push_back(T &&value);
 
     void pop_back();
@@ -161,12 +164,13 @@ namespace swo {
     void resize(size_type count, T const &value);
 
     void swap(deque &other) noexcept;
-
+    */
   private:
     value_type *buffer{nullptr};
-    int head{0};
-    int tail{0};
-    bool buffer_empty{false};
+    size_type capacity;
+    loop_back_counter head;
+    loop_back_counter tail;
+    bool buffer_empty{true};
 
   };
-}   // namespace swo
+}
