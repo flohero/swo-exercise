@@ -7,6 +7,118 @@
 #define MIN_SIZE 0
 
 namespace swo {
+  /*   ITERATOR   */
+  /*   Friends    */
+  template<typename T>
+  bool operator==(typename deque<T>::iterator const &lhs,
+                  typename deque<T>::iterator const &rhs) noexcept {
+    return lhs.pos == rhs.pos && lhs.deq == rhs.deq;
+  }
+
+  template<typename T>
+  bool operator!=(typename deque<T>::iterator const &lhs,
+                  typename deque<T>::iterator const &rhs) noexcept {
+    return !(*lhs == rhs);
+  }
+
+  /* Constructors */
+  template<typename T>
+  deque<T>::iterator::iterator() = default;
+
+  template<typename T>
+  deque<T>::iterator::iterator(const iterator &src):
+      pos{src.pos}, deq{src.deq} {}
+
+  template<typename T>
+  deque<T>::iterator::iterator(value_type *pos, deque<T> *deq):
+      pos{pos}, deq{deq} {}
+
+  template<typename T>
+  deque<T>::iterator::~iterator() = default;
+
+  /* Methods */
+  template<typename T>
+  typename deque<T>::iterator &deque<T>::iterator::operator=(const iterator &src) {
+    this->deq = src.deq;
+    this->pos = src.pos;
+    return *this;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator::reference deque<T>::iterator::operator*() {
+    return *this->pos;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator::pointer deque<T>::iterator::operator->() {
+    return this->pos;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator::reference
+  deque<T>::iterator::operator[](typename deque<T>::iterator::difference_type offset) {
+    return *(*this + offset);
+  }
+
+  template<typename T>
+  typename deque<T>::iterator &deque<T>::iterator::operator++() noexcept {
+    if (this->pos + 1 < this->deq->buffer + this->deq->capacity) {
+      this->pos++;
+    } else {
+      this->pos = this->deq->buffer;
+    }
+    return *this;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator deque<T>::iterator::operator++(int) noexcept {
+    deque<T>::iterator old{*this};
+    ++*this;
+    return old;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator &deque<T>::iterator::operator--() noexcept {
+    if (this->pos == deq->buffer) {
+      this->pos = this->deq->buffer + this->deq->capacity - 1;
+    } else {
+      this->pos--;
+    }
+    return *this;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator deque<T>::iterator::operator--(int) noexcept {
+    deque<T>::iterator old{*this};
+    --*this;
+    return old;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator &
+  deque<T>::iterator::operator+=(typename deque<T>::iterator::difference_type offset) noexcept {
+    if (this->pos + offset < this->deq->buffer + this->deq->capacity) {
+      this->pos += offset;
+    } else {
+      int diff = (this->pos + (offset % this->deq->capacity)) - (this->deq->buffer + this->deq->capacity);
+      this->pos = this->deq->buffer + diff;
+    }
+    return *this;
+  }
+
+  template<typename T>
+  typename deque<T>::iterator &
+  deque<T>::iterator::operator-=(typename deque<T>::iterator::difference_type offset) noexcept {
+    if (this->pos - offset >= this->deq->buffer) {
+      this->pos -= offset;
+    } else {
+      int diff = this->deq->buffer - (this->pos - (offset % this->deq->capacity));
+      this->pos = (this->deq->buffer + this->deq->capacity) - diff;
+    }
+    return *this;
+  }
+
+  /*    DEQUE     */
   /* Constructors */
 
   /**
@@ -48,6 +160,16 @@ namespace swo {
     delete[] this->buffer;
   }
 
+  template<typename T>
+  typename deque<T>::iterator deque<T>::begin() noexcept {
+    return iterator{this->buffer + this->head(), this};
+  }
+
+  template<typename T>
+  typename deque<T>::iterator deque<T>::end() noexcept {
+    return iterator{this->buffer + this->tail() + 1, this};
+  }
+
   /**
    * Check if the deque is empty.
    * Name is misleading, usually a method checking if the object has a specific characteristic
@@ -61,6 +183,19 @@ namespace swo {
   }
 
   template<typename T>
+  typename deque<T>::size_type deque<T>::size() const noexcept {
+    // TODO implement
+    return 0;
+  }
+
+  template<typename T>
+  void deque<T>::clear() noexcept {
+    this->head = 0;
+    this->head = 0;
+    this->buffer_empty = true;
+  }
+
+  template<typename T>
   void deque<T>::push_back(const T &value) {
     if (this->empty()) {
       this->buffer_empty = false;
@@ -71,9 +206,21 @@ namespace swo {
   }
 
   template<typename T>
-  typename deque<T>::size_type deque<T>::size() const noexcept {
-    // TODO implement
-    return 0;
+  void deque<T>::push_back(T &&value) {
+    if (this->full()) {
+      throw std::overflow_error{"Deque is fulL"};
+    }
+    if (this->empty()) {
+      this->buffer_empty = false;
+      this->buffer[this->tail()] = value;
+    } else {
+      this->buffer[--this->tail] = value;
+    }
+  }
+
+  template<typename T>
+  bool deque<T>::full() const {
+    return !this->buffer_empty && this->head == this->tail;
   }
 
   template

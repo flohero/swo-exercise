@@ -52,11 +52,11 @@ namespace swo {
       using pointer = T *;
       using reference = T &;
       using value_type = T;
-      /*
+
       friend bool operator==(iterator const &lhs, iterator const &rhs) noexcept;
 
       friend bool operator!=(iterator const &lhs, iterator const &rhs) noexcept;
-
+      /*
       friend bool operator<(iterator const &lhs, iterator const &rhs) noexcept;
 
       friend bool operator<=(iterator const &lhs, iterator const &rhs) noexcept;
@@ -72,7 +72,7 @@ namespace swo {
       friend iterator operator-(iterator itor, difference_type offset) noexcept {
         return itor -= offset;
       }
-      /*
+
       iterator();
 
       iterator(iterator const &src);
@@ -98,7 +98,14 @@ namespace swo {
       iterator &operator+=(difference_type offset) noexcept;
 
       iterator &operator-=(difference_type offset) noexcept;
-       */
+
+    private:
+      value_type *pos{nullptr};
+      deque *deq{nullptr};
+
+      friend class deque<T>;
+
+      iterator(value_type *pos, deque *deq);
     };
 
     deque();
@@ -136,21 +143,21 @@ namespace swo {
     const_reference front() const;
 
     reference front();
-
+    */
     iterator begin() noexcept;
 
     iterator end() noexcept;
-    */
+
     bool empty() const noexcept;
 
     size_type size() const noexcept;
-    /*
-    void clear() noexcept;
-    */
-    void push_back(T const &value);
-    /*
-    void push_back(T &&value);
 
+    void clear() noexcept;
+
+    void push_back(T const &value);
+
+    void push_back(T &&value);
+    /*
     void pop_back();
 
     void push_front(T const &value);
@@ -171,6 +178,8 @@ namespace swo {
     loop_back_counter head;
     loop_back_counter tail;
     bool buffer_empty{true};
+
+    bool full() const;
 
   };
 }

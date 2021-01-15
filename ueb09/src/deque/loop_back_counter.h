@@ -32,7 +32,7 @@ namespace swo {
      * Postfix ++ operator. Returns old value and then increments
      * @return old value
      */
-    size_type operator++(int _) {
+    size_type operator++(int) {
       size_type old = this->counter;
       ++*this;
       return old;
@@ -53,7 +53,7 @@ namespace swo {
      * Postfix -- operator. Returns old value and then decrements
      * @return old value
      */
-    size_type operator--(int _) {
+    size_type operator--(int) {
       size_type old = this->counter;
       --*this;
       return old;
@@ -64,6 +64,11 @@ namespace swo {
      */
     size_type operator()() const {
       return counter;
+    }
+
+    loop_back_counter &operator=(size_type new_val) {
+      this->counter = new_val % limit;
+      return *this;
     }
 
     bool operator==(const loop_back_counter &other) const {
