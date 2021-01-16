@@ -18,6 +18,9 @@
 #include <iterator>
 #include "loop_back_counter.h"
 
+#define DEFAULT_SIZE 256
+#define MIN_SIZE 0
+
 namespace swo {
 
   template<typename T>
@@ -53,18 +56,30 @@ namespace swo {
       using reference = T &;
       using value_type = T;
 
-      friend bool operator==(iterator const &lhs, iterator const &rhs) noexcept;
+      friend bool operator==(iterator const &lhs, iterator const &rhs) noexcept {
+        return lhs.pos == rhs.pos;
+      }
 
-      friend bool operator!=(iterator const &lhs, iterator const &rhs) noexcept;
-      /*
-      friend bool operator<(iterator const &lhs, iterator const &rhs) noexcept;
+      friend bool operator!=(iterator const &lhs, iterator const &rhs) noexcept {
+        return !(lhs == rhs);
+      }
 
-      friend bool operator<=(iterator const &lhs, iterator const &rhs) noexcept;
+      friend bool operator<(iterator const &lhs, iterator const &rhs) noexcept {
+        return lhs.pos < rhs.pos;
+      }
 
-      friend bool operator>(iterator const &lhs, iterator const &rhs) noexcept;
+      friend bool operator<=(iterator const &lhs, iterator const &rhs) noexcept {
+        return lhs.pos <= rhs.pos;
+      }
 
-      friend bool operator>=(iterator const &lhs, iterator const &rhs) noexcept;
-      */
+      friend bool operator>(iterator const &lhs, iterator const &rhs) noexcept {
+        return lhs.pos > rhs.pos;
+      }
+
+      friend bool operator>=(iterator const &lhs, iterator const &rhs) noexcept {
+        return lhs.pos >= rhs.pos;
+      }
+
       friend iterator operator+(iterator itor, difference_type offset) noexcept {
         return itor += offset;
       }
@@ -73,31 +88,80 @@ namespace swo {
         return itor -= offset;
       }
 
-      iterator();
+      iterator() = default;
 
-      iterator(iterator const &src);
+      iterator(iterator const &src) :
+          pos{src.pos}, deq{src.deq} {}
 
-      ~iterator();
+      ~iterator() = default;
 
-      iterator &operator=(iterator const &src);
+      iterator &operator=(iterator const &src) {
+        this->deq = src.deq;
+        this->pos = src.pos;
+        return *this;
+      }
 
-      reference operator*();
+      reference operator*() {
+        return *this->pos;
+      }
 
-      pointer operator->();
+      pointer operator->() {
+        return this->pos;
+      }
 
-      reference operator[](difference_type offset);
+      reference operator[](difference_type offset) {
+        return *(*this + offset);
+      }
 
-      iterator &operator++() noexcept;
+      iterator &operator++() noexcept {
+        if (this->pos + 1 < this->deq->buffer + this->deq->capacity) {
+          this->pos++;
+        } else {
+          this->pos = this->deq->buffer;
+        }
+        return *this;
+      }
 
-      iterator operator++(int) noexcept;
+      iterator operator++(int) noexcept {
+        deque<T>::iterator old{*this};
+        ++*this;
+        return old;
+      }
 
-      iterator &operator--() noexcept;
+      iterator &operator--() noexcept {
+        if (this->pos == deq->buffer) {
+          this->pos = this->deq->buffer + this->deq->capacity - 1;
+        } else {
+          this->pos--;
+        }
+        return *this;
+      }
 
-      iterator operator--(int) noexcept;
+      iterator operator--(int) noexcept {
+        deque<T>::iterator old{*this};
+        --*this;
+        return old;
+      }
 
-      iterator &operator+=(difference_type offset) noexcept;
+      iterator &operator+=(difference_type offset) noexcept {
+        if (this->pos + offset < this->deq->buffer + this->deq->capacity) {
+          this->pos += offset;
+        } else {
+          size_type diff = (this->pos + (offset % this->deq->capacity)) - (this->deq->buffer + this->deq->capacity);
+          this->pos = this->deq->buffer + diff;
+        }
+        return *this;
+      }
 
-      iterator &operator-=(difference_type offset) noexcept;
+      iterator &operator-=(difference_type offset) noexcept {
+        if (this->pos - offset >= this->deq->buffer) {
+          this->pos -= offset;
+        } else {
+          size_type diff = this->deq->buffer - (this->pos - (offset % this->deq->capacity));
+          this->pos = (this->deq->buffer + this->deq->capacity) - diff;
+        }
+        return *this;
+      }
 
     private:
       value_type *pos{nullptr};
@@ -105,22 +169,59 @@ namespace swo {
 
       friend class deque<T>;
 
-      iterator(value_type *pos, deque *deq);
+      iterator(value_type *pos, deque *deq) :
+          pos{pos}, deq{deq} {}
     };
 
-    deque();
+    /**
+     * Initialize the deque with a default size
+     */
+    deque() : deque{DEFAULT_SIZE} {}
 
-    explicit deque(size_type count);
+    /**
+     * Initialize the deque with  defined size
+     * @param count the maximal amount of elements the deque can hold
+     */
+    explicit deque(size_type count) : capacity{count}, head{count}, tail{count} {
+      // Check if count is bigger than zero, even though size_t can be negative since it is unsigned
+      if (count <= MIN_SIZE) {
+        throw std::invalid_argument("Count must be bigger than " + std::to_string(MIN_SIZE));
+      }
+      this->buffer = new T[count];
+    }
 
-    deque(size_type count, T const &value);
-    /*
-    deque(deque const &src);
+    /**
+     * Creates a new deque with a specified size and a default element
+     * @param count size of deque
+     * @param value default element
+     */
+    deque(size_type count, T const &value) : deque{count} {
+      for (size_type i = 0; i < count; i++) {
+        push_back(value);
+      }
+    }
+
+    deque(deque const &src) : deque{src.size()} {
+      this->head = src.head;
+      this->tail = src.tail;
+      this->buffer_empty = src.buffer_empty;
+      for(auto it: src) {
+        this->push_back(it);
+      }
+    }
 
     deque(deque &&src) noexcept;
 
-    deque(std::initializer_list<T> init);
-    */
-    ~deque();
+    deque(std::initializer_list<T> init) : deque{init.size()} {
+      for (const auto &it: init) {
+        this->push_back(it);
+      }
+    }
+
+    ~deque() {
+      delete[] this->buffer;
+    }
+
     /*
     deque &operator=(deque const &src);
 
@@ -144,19 +245,64 @@ namespace swo {
 
     reference front();
     */
-    iterator begin() noexcept;
+    iterator begin() noexcept {
+      return iterator{this->buffer + this->head(), this};
+    }
 
-    iterator end() noexcept;
+    iterator end() noexcept {
+      return iterator{this->buffer + this->tail() + 1, this};
+    }
 
-    bool empty() const noexcept;
+    /**
+     * Check if the deque is empty.
+     * Name is misleading, usually a method checking if the object has a specific characteristic
+     * is named "is_<adjective>", not just "<adjective>".
+     * The naming of member variables would also not result in conflicts.
+     * @returns if the deque is empty
+     */
+    bool empty() const noexcept {
+      return this->buffer_empty;
+    }
 
-    size_type size() const noexcept;
+    size_type size() const noexcept {
+      if (this->empty()) {
+        return 0;
+      }
+      auto start = const_cast<swo::deque<value_type> *>(this)->begin();
+      auto end = const_cast<swo::deque<value_type> *>(this)->end();
+      size_type count = 0;
+      for (auto it = start; it != end; it++, count++);
+      return count;
+    }
 
-    void clear() noexcept;
+    void clear() noexcept {
+      this->head = 0;
+      this->head = 0;
+      this->buffer_empty = true;
+    }
 
-    void push_back(T const &value);
+    void push_back(T const &value) {
+      // TODO fix push back
+      if (this->empty()) {
+        this->buffer_empty = false;
+        this->buffer[this->tail()] = value;
+      } else {
+        this->buffer[--this->tail] = value;
+      }
+    }
 
-    void push_back(T &&value);
+    void push_back(T &&value) {
+      if (this->full()) {
+        throw std::overflow_error{"Deque is fulL"};
+      }
+      if (this->empty()) {
+        this->buffer_empty = false;
+        this->buffer[this->tail()] = value;
+      } else {
+        this->buffer[--this->tail] = value;
+      }
+    }
+
     /*
     void pop_back();
 
@@ -179,7 +325,9 @@ namespace swo {
     loop_back_counter tail;
     bool buffer_empty{true};
 
-    bool full() const;
+    bool full() const {
+      return !this->buffer_empty && this->head == this->tail;
+    }
 
   };
 }
