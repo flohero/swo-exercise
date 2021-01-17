@@ -7,6 +7,9 @@
 using namespace swo;
 
 int main() {
-  deque<std::string> d{10, "4"};
+  deque<std::string> d{2, "3"};
+  //d.push_back("2");
+  //d.push_back("4");
+  d.push_back("4");
   d.size();
 }

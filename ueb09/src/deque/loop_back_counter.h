@@ -16,6 +16,8 @@ namespace swo {
 
     explicit loop_back_counter(size_type limit) : limit{limit} {}
 
+    loop_back_counter(size_type limit, size_type counter): counter{counter}, limit{limit} {}
+
     /**
      * Prefix ++ operator. Increments first and then returns updated value
      * @return updated value
@@ -64,6 +66,14 @@ namespace swo {
      */
     size_type operator()() const {
       return counter;
+    }
+
+    size_type operator+(const size_type add) const {
+      if(counter + add >= limit) {
+        return ((counter + add) % limit);
+      } else {
+        return counter + add;
+      }
     }
 
     loop_back_counter &operator=(size_type new_val) {
