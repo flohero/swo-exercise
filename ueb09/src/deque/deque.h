@@ -57,7 +57,7 @@ namespace swo {
       using value_type = T;
 
       friend bool operator==(iterator const &lhs, iterator const &rhs) noexcept {
-        return lhs.pos == rhs.pos && lhs.iterate_count == rhs.iterate_count;
+        return lhs.index == rhs.index;
       }
 
       friend bool operator!=(iterator const &lhs, iterator const &rhs) noexcept {
@@ -65,25 +65,27 @@ namespace swo {
       }
 
       friend bool operator<(iterator const &lhs, iterator const &rhs) noexcept {
-        return lhs.pos < rhs.pos;
+        return lhs.index < rhs.index;
       }
 
       friend bool operator<=(iterator const &lhs, iterator const &rhs) noexcept {
-        return lhs.pos <= rhs.pos;
+        return lhs.index <= rhs.index;
       }
 
       friend bool operator>(iterator const &lhs, iterator const &rhs) noexcept {
-        return lhs.pos > rhs.pos;
+        return lhs.index > rhs.index;
       }
 
       friend bool operator>=(iterator const &lhs, iterator const &rhs) noexcept {
-        return lhs.pos >= rhs.pos;
+        return lhs.index >= rhs.index;
       }
 
+      // Do not touch
       friend iterator operator+(iterator itor, difference_type offset) noexcept {
         return itor += offset;
       }
 
+      // Do not touch
       friend iterator operator-(iterator itor, difference_type offset) noexcept {
         return itor -= offset;
       }
@@ -91,22 +93,23 @@ namespace swo {
       iterator() = default;
 
       iterator(iterator const &src) :
-          pos{src.pos}, deq{src.deq} {}
+          index{src.index}, deq{src.deq} {}
 
       ~iterator() = default;
 
       iterator &operator=(iterator const &src) {
         this->deq = src.deq;
         this->pos = src.pos;
+        this->index = src.index;
         return *this;
       }
 
       reference operator*() {
-        return *this->pos;
+        return this->deq->operator[](index);
       }
 
       pointer operator->() {
-        return this->pos;
+        return this->deq->operator[](index);
       }
 
       reference operator[](difference_type offset) {
@@ -114,12 +117,7 @@ namespace swo {
       }
 
       iterator &operator++() noexcept {
-        if (this->pos + 1 < this->deq->buffer + this->deq->capacity) {
-          this->pos++;
-        } else {
-          this->pos = this->deq->buffer;
-        }
-        iterate_count++;
+        this->index++;
         return *this;
       }
 
@@ -130,11 +128,7 @@ namespace swo {
       }
 
       iterator &operator--() noexcept {
-        if (this->pos == deq->buffer) {
-          this->pos = this->deq->buffer + this->deq->capacity - 1;
-        } else {
-          this->pos--;
-        }
+        this->index--;
         return *this;
       }
 
@@ -145,38 +139,23 @@ namespace swo {
       }
 
       iterator &operator+=(difference_type offset) noexcept {
-        if (this->pos + offset < this->deq->buffer + this->deq->capacity) {
-          this->pos += offset;
-        } else {
-          size_type diff = (this->pos + (offset % this->deq->capacity)) - (this->deq->buffer + this->deq->capacity);
-          this->pos = this->deq->buffer + diff;
-        }
+        this->index += offset;
         return *this;
       }
 
       iterator &operator-=(difference_type offset) noexcept {
-        if (this->pos - offset >= this->deq->buffer) {
-          this->pos -= offset;
-        } else {
-          size_type diff = this->deq->buffer - (this->pos - (offset % this->deq->capacity));
-          this->pos = (this->deq->buffer + this->deq->capacity) - diff;
-        }
+        this->index -= offset;
         return *this;
       }
 
     private:
-      value_type *pos{nullptr};
       deque *deq{nullptr};
-      size_type iterate_count{0}; // count how often the iterator has been incremented
-      //size_type index;
+      size_type index;
 
       friend class deque<T>;
 
-      iterator(value_type *pos, deque *deq) :
-          pos{pos}, deq{deq} {}
-
-      iterator(value_type *pos, deque *deq, size_type iterate_count) :
-          pos{pos}, deq{deq}, iterate_count{iterate_count} {}
+      iterator(size_type index, deque *deq) :
+          deq{deq}, index{index} {}
     };
 
     /**
@@ -220,8 +199,7 @@ namespace swo {
 
     deque(deque const &src) : capacity{src.capacity},
                               head{src.head},
-                              tail{src.tail},
-                              buffer_empty{src.buffer_empty} {
+                              tail{src.tail} {
       for (auto it: src) {
         this->push_back(it);
       }
@@ -250,18 +228,19 @@ namespace swo {
     deque &operator=(std::initializer_list<T> init);
     */
     const_reference operator[](size_type pos) const {
-      if(this->tail + pos > this->head()) {
+      if (this->tail + pos > this->head()) {
         throw std::out_of_range{"Index out of bounds"};
       }
       return this->buffer[this->tail + pos];
     }
 
     reference operator[](size_type pos) {
-      if(this->tail + pos > this->head()) {
+      if (this->tail + pos > this->head()) {
         throw std::out_of_range{"Index out of bounds"};
       }
       return this->buffer[this->tail + pos];
     }
+
     /*
     const_reference at(size_type pos) const;
 
@@ -276,12 +255,11 @@ namespace swo {
     reference front();
     */
     iterator begin() noexcept {
-      return iterator{this->buffer + this->tail(), this};
+      return iterator{0, this};
     }
 
     iterator end() noexcept {
-      value_type *pos = this->buffer + (this->head + 1);
-      return iterator{pos, this, this->size_};
+      return iterator{this->size_, this};
     }
 
     /**
@@ -292,7 +270,7 @@ namespace swo {
      * @returns if the deque is empty
      */
     bool empty() const noexcept {
-      return this->buffer_empty;
+      return this->size_ == 0;
     }
 
     size_type size() const noexcept {
@@ -302,7 +280,6 @@ namespace swo {
     void clear() noexcept {
       this->head = 0;
       this->head = 0;
-      this->buffer_empty = true;
     }
 
     void push_back(T const &value) {
@@ -310,7 +287,6 @@ namespace swo {
         this->resize(this->capacity * 2);
       }
       if (this->empty()) {
-        this->buffer_empty = false;
         this->buffer[this->head()] = value;
       } else {
         this->buffer[++this->head] = value;
@@ -323,7 +299,6 @@ namespace swo {
         this->resize(this->capacity * 2);
       }
       if (this->empty()) {
-        this->buffer_empty = false;
         this->buffer[this->head()] = value;
       } else {
         this->buffer[++this->head] = value;
@@ -346,8 +321,6 @@ namespace swo {
       }
       auto new_buffer = new T[count];
       size_type i = 0;
-      const iterator &anEnd = this->end();
-      const iterator &start = this->begin();
       for (auto it: *this) {
         new_buffer[i] = it;
         i++;
@@ -362,7 +335,7 @@ namespace swo {
     void resize(size_type count, T const &value) {
       auto old_count = this->capacity;
       this->resize(count);
-      for(size_type i = old_count; i < this->capacity; i++) {
+      for (size_type i = old_count; i < this->capacity; i++) {
         push_back(value);
       }
     }
@@ -375,7 +348,6 @@ namespace swo {
     value_type *buffer{nullptr};
     loop_back_counter head;
     loop_back_counter tail;
-    bool buffer_empty{true};
 
     bool full() const {
       return this->capacity == this->size();

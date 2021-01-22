@@ -11,5 +11,8 @@ int main() {
   //d.push_back("2");
   //d.push_back("4");
   d.push_back("4");
+  for(const auto& it: d) {
+    std::cout << it << std::endl;
+  }
   d.size();
 }
