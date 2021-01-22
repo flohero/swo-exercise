@@ -31,19 +31,69 @@ namespace swo {
     using size_type = std::size_t;
     using value_type = T;
 
-    /*
-    friend bool operator==(deque const &lhs, deque const &rhs) noexcept;
+    /**
+     * Two deques are equal when their elements at an index i are equal, their size and capacity must also be equal,
+     * tail and head do not have to be equal
+     * @param lhs
+     * @param rhs
+     * @returns if lhs and rhs are equal
+     * */
+    friend bool operator==(deque const &lhs, deque const &rhs) noexcept {
+      if (lhs.size_ != rhs.size_ || lhs.capacity != rhs.capacity) {
+        return false;
+      }
+      for (size_type i = 0; i < lhs.size_; i++) {
+        if (lhs[i] != rhs[i]) {
+          return false;
+        }
+      }
+      return true;
+    }
 
-    friend bool operator!=(deque const &lhs, deque const &rhs) noexcept;
+    /**
+     * Two deques are not equal if either the size or capacity is not equal, or the elements at an index are not equal
+     * @param lhs
+     * @param rhs
+     * @returns if lhs and rhs are not equal
+     * */
+    friend bool operator!=(deque const &lhs, deque const &rhs) noexcept {
+      return !(lhs == rhs);
+    }
 
-    friend bool operator<(deque const &lhs, deque const &rhs) noexcept;
+    /**
+     * @param lhs
+     * @param rhs
+     * @returns if lhs.size, lhs.capacity and all lhs elements are smaller than its rhs counterparts
+     */
+    friend bool operator<(deque const &lhs, deque const &rhs) noexcept {
+      if (lhs.size_ >= rhs.size_ || lhs.capacity >= rhs.capacity) {
+        return false;
+      }
+      for (size_type i = 0; i < lhs.size_; i++) {
+        if (lhs[i] >= rhs[i]) {
+          return false;
+        }
+      }
+      return true;
+    }
 
-    friend bool operator<=(deque const &lhs, deque const &rhs) noexcept;
+    /**
+     * @param lhs
+     * @param rhs
+     * @returns if one deque is smaller equal to another deque
+     */
+    friend bool operator<=(deque const &lhs, deque const &rhs) noexcept {
+      return lhs < rhs || lhs == rhs;
+    }
 
-    friend bool operator>(deque const &lhs, deque const &rhs) noexcept;
+    friend bool operator>(deque const &lhs, deque const &rhs) noexcept {
+      return !(lhs <= rhs);
+    }
 
-    friend bool operator>=(deque const &lhs, deque const &rhs) noexcept;
-    */
+    friend bool operator>=(deque const &lhs, deque const &rhs) noexcept {
+      return lhs > rhs || lhs == rhs;
+    }
+
     friend void swap(deque<T> &a, deque<T> &b) noexcept {
       a.swap(b);
     }
@@ -105,11 +155,11 @@ namespace swo {
       }
 
       reference operator*() {
-        return this->deq->operator[](index);
+        return this->deq[index];
       }
 
       pointer operator->() {
-        return this->deq->operator[](index);
+        return this->deq[index];
       }
 
       reference operator[](difference_type offset) {
@@ -205,7 +255,14 @@ namespace swo {
       }
     }
 
-    deque(deque &&src) noexcept;
+    deque(deque &&src) noexcept:
+        capacity{src.capacity},
+        size_{src.size_},
+        head{src.head},
+        tail{src.tail},
+        buffer{src.buffer} {
+      src.buffer = nullptr;
+    }
 
     deque(std::initializer_list<T> init) : capacity{init.size()},
                                            buffer{new T[capacity]},
@@ -254,10 +311,17 @@ namespace swo {
 
     reference front();
     */
+
+    /**
+     * @returns the first valid iterator
+     */
     iterator begin() noexcept {
       return iterator{0, this};
     }
 
+    /**
+     * @returns the last valid iterator + 1
+     */
     iterator end() noexcept {
       return iterator{this->size_, this};
     }
@@ -273,6 +337,10 @@ namespace swo {
       return this->size_ == 0;
     }
 
+    /**
+     * Count of elements in deque
+     * @returns the count of elements in the deque
+     */
     size_type size() const noexcept {
       return this->size_;
     }
