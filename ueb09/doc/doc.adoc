@@ -1,0 +1,171 @@
+= Abgabe 09: Deque
+:author: Florian Weingartshofer
+:email: <S1910307103@students.fh-hagenberg.at>
+:reproducible:
+:experimental:
+:listing-caption: Listing
+:source-highlighter: rouge
+:sourcedir: ../src/chess
+:imgdir: ./img
+:imagesoutdir: ./out
+:toc:
+:toclevels: 4
+
+<<<
+== Lösungsidee
+=== Ringbuffer
+Der Ringbuffer wird mithilfe eines Arrays realisiert.
+Es gibt zwei Indizes, wobei einer - `last` - auf das letzte Element zeigt
+und beim Einfügen eines Elments dekrementiert wird.
+Beim Löschen des letzten Elements wird `last` einfach inkrementiert.
+Dasselbe nur umgekehrt gilt für den Index `first`, welcher auf das erste Element zeigt.
+
+.Ringbuffer
+[ditaa]
+....
+       first    last
+         |       |
+         v       v
+   +-------------------+
++->| 2 | 4 | - | 3 | 9 +--+
+|  +-------------------+  |
++-------------------------+
+....
+
+
+
+=== Deque
+Eine Deque wrird mit einem Ringbuffer implementiert.
+
+.Deque mit Strings
+[graphviz,width=400]
+----
+digraph g1 {
+    layout="circo";
+    forcelabels=true;
+    node [shape = circle];
+    N0 [xlabel="0", label="\"Hello\""]
+    N1 [xlabel="1", label=""]
+    N2 [xlabel="2", label=""]
+    N3 [xlabel="3", label=""]
+    N4 [xlabel="4", label=""]
+    N5 [xlabel="5", label=""]
+
+    N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
+
+    first [fillcolor = aquamarine, style=filled, label="first = 0"];
+    last [fillcolor = indianred1, style=filled, label="last = 0"];
+    first -> N0;
+    last -> N0;
+}
+----
+
+==== Einügen von Elementen.
+Wenn nun ein Element hinten angefügt wird (`push_back`), wandert `last` auch nach hinten, und wird gezwungenermaßen um eins veringert, aber durch den Ringbuffer auf `5` gesetzt.
+
+.push_back
+[graphviz,width=400]
+----
+digraph g1 {
+    layout="circo";
+    forcelabels=true;
+    node [shape = circle];
+    N0 [xlabel="0", label="\"Hello\""]
+    N1 [xlabel="1", label=""]
+    N2 [xlabel="2", label=""]
+    N3 [xlabel="3", label=""]
+    N4 [xlabel="4", label=""]
+    N5 [xlabel="5", label="\"value\""]
+
+    N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
+
+    first [fillcolor = aquamarine, style=filled, label="first = 0"];
+    last [fillcolor = indianred1, style=filled, label="last = 5"];
+    first -> N0;
+    last -> N5;
+}
+----
+
+Hier ein Beispiel der `push_front` Operation.
+
+.push_front
+[graphviz,width=400]
+----
+digraph g1 {
+    layout="circo";
+    forcelabels=true;
+    node [shape = circle];
+    N0 [xlabel="0", label="\"Hello\""]
+    N1 [xlabel="1", label="\"other\""]
+    N2 [xlabel="2", label=""]
+    N3 [xlabel="3", label=""]
+    N4 [xlabel="4", label=""]
+    N5 [xlabel="5", label="\"value\""]
+
+    N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
+
+    first [fillcolor = aquamarine, style=filled, label="first = 1"];
+    last [fillcolor = indianred1, style=filled, label="last = 5"];
+    first -> N1;
+    last -> N5;
+}
+----
+
+==== Resize
+Wenn die Deque voll ist wird sie automatisch vergrößert
+und die Indizes werden verschoben.
+Wobei `last` zurück auf `0` verschoben wird und
+`first` nach vorne verschoben.
+
+.Full Deque
+[graphviz,width=400]
+----
+digraph g1 {
+    layout="circo";
+    forcelabels=true;
+    node [shape = circle];
+    N0 [xlabel="0", label="\"Hello\""]
+    N1 [xlabel="1", label="\"other\""]
+    N2 [xlabel="2", label="\"a\""]
+    N3 [xlabel="3", label="\"s\""]
+    N4 [xlabel="4", label="\"d\""]
+    N5 [xlabel="5", label="\"value\""]
+
+    N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
+
+    first [fillcolor = aquamarine, style=filled, label="first = 2"];
+    last [fillcolor = indianred1, style=filled, label="last = 3"];
+    first -> N2;
+    last -> N3;
+}
+----
+
+.Resized Deque
+[graphviz,width=400]
+----
+digraph g1 {
+    layout="circo";
+    forcelabels=true;
+    node [shape = circle];
+    N0 [xlabel="0", label="\"s\""]
+    N1 [xlabel="1", label="\"d\""]
+    N2 [xlabel="2", label="\"value\""]
+    N3 [xlabel="3", label="\"Hello\""]
+    N4 [xlabel="4", label="\"other\""]
+    N5 [xlabel="5", label="\"a\""]
+    N6 [xlabel="6", label=""]
+    N7 [xlabel="7", label=""]
+    N8 [xlabel="8", label=""]
+    N9 [xlabel="9", label=""]
+    N10 [xlabel="10", label=""]
+    N11[xlabel="11", label=""]
+
+    N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N6
+    -> N7 -> N8 -> N9 -> N10 -> N11 -> N0;
+
+    first [fillcolor = aquamarine, style=filled, label="first = 5"];
+    last [fillcolor = indianred1, style=filled, label="last = 0"];
+    first -> N5;
+    last -> N0;
+}
+----
