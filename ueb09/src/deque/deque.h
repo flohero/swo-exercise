@@ -33,7 +33,7 @@ namespace swo {
 
     /**
      * Two deques are equal when their elements at an index i are equal, their size and capacity must also be equal,
-     * tail and head do not have to be equal
+     * first and last do not have to be equal
      * @param lhs
      * @param rhs
      * @returns if lhs and rhs are equal
@@ -155,11 +155,11 @@ namespace swo {
       }
 
       reference operator*() {
-        return this->deq[index];
+        return this->deq->at(index);
       }
 
       pointer operator->() {
-        return this->deq[index];
+        return &this->deq->at(index);
       }
 
       reference operator[](difference_type offset) {
@@ -213,8 +213,8 @@ namespace swo {
      */
     deque() : capacity{DEFAULT_SIZE},
               buffer{new T[capacity]},
-              head{capacity},
-              tail{capacity} {}
+              last{capacity},
+              first{capacity} {}
 
     /**
      * Initialize the deque with  defined size
@@ -222,8 +222,8 @@ namespace swo {
      */
     explicit deque(size_type count) : capacity{count},
                                       buffer{new T[capacity]},
-                                      head{capacity},
-                                      tail{capacity} {
+                                      last{capacity},
+                                      first{capacity} {
       // Check if count is bigger than zero, even though size_t can be negative since it is unsigned
       if (count <= MIN_SIZE) {
         throw std::invalid_argument("Count must be bigger than " + std::to_string(MIN_SIZE));
@@ -236,8 +236,8 @@ namespace swo {
      * @param value default element
      */
     deque(size_type count, T const &value) : capacity{count},
-                                             head{capacity},
-                                             tail{capacity} {
+                                             last{capacity},
+                                             first{capacity} {
       if (count <= MIN_SIZE) {
         throw std::invalid_argument("Count must be bigger than " + std::to_string(MIN_SIZE));
       }
@@ -248,8 +248,8 @@ namespace swo {
     }
 
     deque(deque const &src) : capacity{src.capacity},
-                              head{src.head},
-                              tail{src.tail} {
+                              last{src.last},
+                              first{src.first} {
       for (auto it: src) {
         this->push_back(it);
       }
@@ -258,16 +258,16 @@ namespace swo {
     deque(deque &&src) noexcept:
         capacity{src.capacity},
         size_{src.size_},
-        head{src.head},
-        tail{src.tail},
+        last{src.last},
+        first{src.first},
         buffer{src.buffer} {
       src.buffer = nullptr;
     }
 
     deque(std::initializer_list<T> init) : capacity{init.size()},
                                            buffer{new T[capacity]},
-                                           head{capacity},
-                                           tail{capacity} {
+                                           last{capacity},
+                                           first{capacity} {
       for (const auto &it: init) {
         this->push_back(it);
       }
@@ -285,24 +285,27 @@ namespace swo {
     deque &operator=(std::initializer_list<T> init);
     */
     const_reference operator[](size_type pos) const {
-      if (this->tail + pos > this->head()) {
-        throw std::out_of_range{"Index out of bounds"};
-      }
-      return this->buffer[this->tail + pos];
+      return this->at(pos);
     }
 
     reference operator[](size_type pos) {
-      if (this->tail + pos > this->head()) {
-        throw std::out_of_range{"Index out of bounds"};
-      }
-      return this->buffer[this->tail + pos];
+      return this->at(pos);
     }
 
+    const_reference at(size_type pos) const {
+      if (this->first + pos > this->last()) {
+        throw std::out_of_range{"Index out of bounds"};
+      }
+      return this->buffer[this->first + pos];
+    }
+
+    reference at(size_type pos) {
+      if (this->first + pos > this->last()) {
+        throw std::out_of_range{"Index out of bounds"};
+      }
+      return this->buffer[this->first + pos];
+    }
     /*
-    const_reference at(size_type pos) const;
-
-    reference at(size_type pos);
-
     const_reference back() const;
 
     reference back();
@@ -346,8 +349,8 @@ namespace swo {
     }
 
     void clear() noexcept {
-      this->head = 0;
-      this->head = 0;
+      this->last = 0;
+      this->last = 0;
     }
 
     void push_back(T const &value) {
@@ -355,9 +358,9 @@ namespace swo {
         this->resize(this->capacity * 2);
       }
       if (this->empty()) {
-        this->buffer[this->head()] = value;
+        this->buffer[this->last()] = value;
       } else {
-        this->buffer[++this->head] = value;
+        this->buffer[++this->last] = value;
       }
       this->size_++;
     }
@@ -367,9 +370,9 @@ namespace swo {
         this->resize(this->capacity * 2);
       }
       if (this->empty()) {
-        this->buffer[this->head()] = value;
+        this->buffer[this->last()] = value;
       } else {
-        this->buffer[++this->head] = value;
+        this->buffer[++this->last] = value;
       }
       this->size_++;
     }
@@ -396,8 +399,8 @@ namespace swo {
       delete[]this->buffer;
       this->capacity = count;
       this->buffer = new_buffer;
-      this->tail = loop_back_counter{this->capacity};
-      this->head = loop_back_counter{this->capacity, i - 1};
+      this->first = loop_back_counter{this->capacity};
+      this->last = loop_back_counter{this->capacity, i - 1};
     }
 
     void resize(size_type count, T const &value) {
@@ -414,8 +417,8 @@ namespace swo {
     size_type capacity;
     size_type size_{0};
     value_type *buffer{nullptr};
-    loop_back_counter head;
-    loop_back_counter tail;
+    loop_back_counter last;
+    loop_back_counter first;
 
     bool full() const {
       return this->capacity == this->size();

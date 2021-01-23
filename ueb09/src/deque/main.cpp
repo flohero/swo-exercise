@@ -9,9 +9,11 @@ using namespace swo;
 int main() {
   deque<std::string> d{2, "3"};
   d.push_back("4");
-  for(const auto& it: d) {
+  for(auto & it : d) {
     std::cout << it << std::endl;
   }
+
+  std::cout << d.begin()->append("Test") << std::endl;
 
   deque<std::string> d2{1};
   d2.push_back("3");
@@ -26,5 +28,4 @@ int main() {
   if(d != d2) {
     std::cout << "Are not equal" << std::endl;
   }
-  d.size();
 }
