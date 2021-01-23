@@ -23,7 +23,7 @@ Dasselbe nur umgekehrt gilt für den Index `first`, welcher auf das erste Elemen
 .Ringbuffer
 [ditaa]
 ....
-       first    last
+       last    first
          |       |
          v       v
    +-------------------+
@@ -35,7 +35,7 @@ Dasselbe nur umgekehrt gilt für den Index `first`, welcher auf das erste Elemen
 
 
 === Deque
-Eine Deque wrird mit einem Ringbuffer implementiert.
+Eine Deque wird mit einem Ringbuffer implementiert.
 
 .Deque mit Strings
 [graphviz,width=400]
@@ -53,17 +53,18 @@ digraph g1 {
 
     N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
 
-    first [fillcolor = aquamarine, style=filled, label="first = 0"];
-    last [fillcolor = indianred1, style=filled, label="last = 0"];
-    first -> N0;
+    last [fillcolor = aquamarine, style=filled, label="last = 0"];
+    first [fillcolor = indianred1, style=filled, label="first = 0"];
     last -> N0;
+    first -> N0;
 }
 ----
 
 ==== Einügen von Elementen.
-Wenn nun ein Element hinten angefügt wird (`push_back`), wandert `last` auch nach hinten, und wird gezwungenermaßen um eins veringert, aber durch den Ringbuffer auf `5` gesetzt.
+Wenn ein Element mithilfe von `push_front` in die Queue hinzugefügt wird,
+wird `first` um eins verringert.
 
-.push_back
+.push_front
 [graphviz,width=400]
 ----
 digraph g1 {
@@ -79,16 +80,16 @@ digraph g1 {
 
     N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
 
-    first [fillcolor = aquamarine, style=filled, label="first = 0"];
-    last [fillcolor = indianred1, style=filled, label="last = 5"];
-    first -> N0;
-    last -> N5;
+    last [fillcolor = aquamarine, style=filled, label="last = 0"];
+    first [fillcolor = indianred1, style=filled, label="first = 5"];
+    last -> N0;
+    first -> N5;
 }
 ----
 
-Hier ein Beispiel der `push_front` Operation.
+Hier ein Beispiel der `push_back` Operation.
 
-.push_front
+.push_back
 [graphviz,width=400]
 ----
 digraph g1 {
@@ -104,18 +105,18 @@ digraph g1 {
 
     N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
 
-    first [fillcolor = aquamarine, style=filled, label="first = 1"];
-    last [fillcolor = indianred1, style=filled, label="last = 5"];
-    first -> N1;
-    last -> N5;
+    last [fillcolor = aquamarine, style=filled, label="last = 1"];
+    first [fillcolor = indianred1, style=filled, label="first = 5"];
+    last -> N1;
+    first -> N5;
 }
 ----
 
 ==== Resize
 Wenn die Deque voll ist wird sie automatisch vergrößert
 und die Indizes werden verschoben.
-Wobei `last` zurück auf `0` verschoben wird und
-`first` nach vorne verschoben.
+Wobei `first` zurück auf `0` verschoben wird und
+`last` nach vorne verschoben.
 
 .Full Deque
 [graphviz,width=400]
@@ -133,10 +134,10 @@ digraph g1 {
 
     N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
 
-    first [fillcolor = aquamarine, style=filled, label="first = 2"];
-    last [fillcolor = indianred1, style=filled, label="last = 3"];
-    first -> N2;
-    last -> N3;
+    last [fillcolor = aquamarine, style=filled, label="last = 2"];
+    first [fillcolor = indianred1, style=filled, label="first = 3"];
+    last -> N2;
+    first -> N3;
 }
 ----
 
@@ -163,9 +164,9 @@ digraph g1 {
     N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N6
     -> N7 -> N8 -> N9 -> N10 -> N11 -> N0;
 
-    first [fillcolor = aquamarine, style=filled, label="first = 5"];
-    last [fillcolor = indianred1, style=filled, label="last = 0"];
-    first -> N5;
-    last -> N0;
+    last [fillcolor = aquamarine, style=filled, label="last = 5"];
+    first [fillcolor = indianred1, style=filled, label="first = 0"];
+    last -> N5;
+    first -> N0;
 }
 ----

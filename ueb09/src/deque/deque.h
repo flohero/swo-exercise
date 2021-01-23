@@ -199,8 +199,8 @@ namespace swo {
       }
 
     private:
-      deque *deq{nullptr};
-      size_type index;
+      deque<T> *deq{nullptr};
+      size_type index{0};
 
       friend class deque<T>;
 
@@ -212,7 +212,7 @@ namespace swo {
      * Initialize the deque with a default size
      */
     deque() : capacity{DEFAULT_SIZE},
-              buffer{new T[capacity]},
+              buffer{new value_type[capacity]},
               last{capacity},
               first{capacity} {}
 
@@ -221,7 +221,7 @@ namespace swo {
      * @param count the maximal amount of elements the deque can hold
      */
     explicit deque(size_type count) : capacity{count},
-                                      buffer{new T[capacity]},
+                                      buffer{new value_type[capacity]},
                                       last{capacity},
                                       first{capacity} {
       // Check if count is bigger than zero, even though size_t can be negative since it is unsigned
@@ -241,7 +241,7 @@ namespace swo {
       if (count <= MIN_SIZE) {
         throw std::invalid_argument("Count must be bigger than " + std::to_string(MIN_SIZE));
       }
-      buffer = new T[capacity];
+      buffer = new value_type[capacity];
       for (size_type i = 0; i < count; i++) {
         push_back(value);
       }
@@ -265,7 +265,7 @@ namespace swo {
     }
 
     deque(std::initializer_list<T> init) : capacity{init.size()},
-                                           buffer{new T[capacity]},
+                                           buffer{new value_type[capacity]},
                                            last{capacity},
                                            first{capacity} {
       for (const auto &it: init) {
@@ -277,13 +277,44 @@ namespace swo {
       delete[] this->buffer;
     }
 
-    /*
-    deque &operator=(deque const &src);
 
-    deque &operator=(deque &&src) noexcept;
+    deque &operator=(deque const &src) {
+      delete[]this->buffer;
+      this->buffer = new value_type[src.capacity];
+      this->first = 0;
+      size_type count = 0;
+      for (auto it : src) {
+        this->buffer[count] = it;
+        count++;
+      }
+      this->last = count - 1;
+      this->size_ = count;
+    }
 
-    deque &operator=(std::initializer_list<T> init);
-    */
+    deque &operator=(deque &&src) noexcept {
+      if (this != *src) {
+        this->buffer = src.buffer;
+        src.buffer = nullptr;
+        this->size_ = src.size_;
+        this->first = src.first;
+        this->last = src.last;
+        this->capacity = src.capacity;
+      }
+      return *this;
+    }
+
+    deque &operator=(std::initializer_list<T> init) {
+      delete[]this->buffer;
+      this->last = 0;
+      this->first = 0;
+      this->size_ = 0;
+      this->capacity = init.size();
+      this->buffer = new value_type[this->capacity];
+      for (auto it : init) {
+        this->push_back(it);
+      }
+    }
+
     const_reference operator[](size_type pos) const {
       return this->at(pos);
     }
@@ -293,27 +324,39 @@ namespace swo {
     }
 
     const_reference at(size_type pos) const {
-      if (this->first + pos > this->last()) {
+      if (this->first + pos > this->size()) {
         throw std::out_of_range{"Index out of bounds"};
       }
       return this->buffer[this->first + pos];
     }
 
     reference at(size_type pos) {
-      if (this->first + pos > this->last()) {
+      if (this->first + pos > this->size()) {
         throw std::out_of_range{"Index out of bounds"};
       }
       return this->buffer[this->first + pos];
     }
-    /*
-    const_reference back() const;
 
-    reference back();
+    const_reference back() const {
+      throw_on_empty();
+      return this->buffer[this->last()];
+    }
 
-    const_reference front() const;
+    reference back() {
+      throw_on_empty();
+      return this->buffer[this->last()];
+    }
 
-    reference front();
-    */
+    const_reference front() const {
+      throw_on_empty();
+      return this->buffer[this->first()];
+    }
+
+    reference front() {
+      throw_on_empty();
+      return this->buffer[this->first()];
+    }
+
 
     /**
      * @returns the first valid iterator
@@ -350,13 +393,15 @@ namespace swo {
 
     void clear() noexcept {
       this->last = 0;
-      this->last = 0;
+      this->first = 0;
+      this->capacity = 0;
+      this->size_ = 0;
+      delete[]this->buffer;
+      this->buffer = nullptr;
     }
 
     void push_back(T const &value) {
-      if (this->full()) {
-        this->resize(this->capacity * 2);
-      }
+      auto_resize();
       if (this->empty()) {
         this->buffer[this->last()] = value;
       } else {
@@ -366,9 +411,7 @@ namespace swo {
     }
 
     void push_back(T &&value) {
-      if (this->full()) {
-        this->resize(this->capacity * 2);
-      }
+      auto_resize();
       if (this->empty()) {
         this->buffer[this->last()] = value;
       } else {
@@ -377,20 +420,47 @@ namespace swo {
       this->size_++;
     }
 
-    /*
-    void pop_back();
+    void pop_back() {
+      throw_on_empty();
+      if (this->size() != 1) {
+        this->last--;
+      }
+      this->size_--;
+    }
 
-    void push_front(T const &value);
+    void push_front(T const &value) {
+      auto_resize();
+      if (this->empty()) {
+        this->buffer[this->first()] = value;
+      } else {
+        this->buffer[--this->first] = value;
+      }
+      this->size_++;
+    }
 
-    void push_front(T &&value);
+    void push_front(T &&value) {
+      auto_resize();
+      if (this->empty()) {
+        this->buffer[this->first()] = value;
+      } else {
+        this->buffer[--this->first] = value;
+      }
+      this->size_++;
+    }
 
-    void pop_front();
-    */
+    void pop_front() {
+      throw_on_empty();
+      if (this->size() != 1) {
+        this->first++;
+      }
+      this->size_--;
+    }
+
     void resize(size_type count) {
       if (count <= this->capacity) {
         throw std::invalid_argument{"New count must be bigger than old count"};
       }
-      auto new_buffer = new T[count];
+      auto new_buffer = new value_type[count];
       size_type i = 0;
       for (auto it: *this) {
         new_buffer[i] = it;
@@ -410,9 +480,15 @@ namespace swo {
         push_back(value);
       }
     }
-    /*
-    void swap(deque &other) noexcept;
-    */
+
+    void swap(deque &other) noexcept {
+      std::swap(this->size_, other.size_);
+      std::swap(this->last, other.last);
+      std::swap(this->first, other.first);
+      std::swap(this->buffer, other.buffer);
+      std::swap(this->capacity, other.capacity);
+    }
+
   private:
     size_type capacity;
     size_type size_{0};
@@ -420,8 +496,23 @@ namespace swo {
     loop_back_counter last;
     loop_back_counter first;
 
-    bool full() const {
+    [[nodiscard]] bool full() const {
       return this->capacity == this->size();
+    }
+
+    /**
+     * Resizes the buffer automatically if its full
+     */
+    void auto_resize() {
+      if (full()) {
+        resize(capacity * 2);
+      }
+    }
+
+    void throw_on_empty() const {
+      if (empty()) {
+        throw std::out_of_range{"Deque is empty"};
+      }
     }
   };
 }

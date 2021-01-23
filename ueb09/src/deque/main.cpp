@@ -7,13 +7,13 @@
 using namespace swo;
 
 int main() {
-  deque<std::string> d{2, "3"};
+  deque<std::string> d{1, "3"};
   d.push_back("4");
+  d.push_front("3");
   for(auto & it : d) {
-    std::cout << it << std::endl;
+    std::cout << it << " ";
   }
-
-  std::cout << d.begin()->append("Test") << std::endl;
+  std::cout << std::endl;
 
   deque<std::string> d2{1};
   d2.push_back("3");
