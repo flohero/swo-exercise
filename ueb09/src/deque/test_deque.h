@@ -22,7 +22,7 @@ namespace swo {
 
   class test_deque {
   public:
-    static void simple_print_test() {
+    static void simple_iterator_test() {
       separator();
       FUNC;
       // Given
@@ -86,7 +86,7 @@ namespace swo {
 
       // When
       // Then
-      assert(!(d < d2));
+      assert(!(d < d2) && d == d2);
       success();
     }
 
@@ -282,7 +282,7 @@ namespace swo {
       std::string expected[] = {"Hello", "friend"};
 
       int i = 0;
-      for (deque<std::string>::iterator it = d.begin(); it < d.end(); it += 2, i += 2) {
+      for (deque<std::string>::iterator it = d.begin(); it < d.end(); it += 2, i++) {
         // When
         std::string res = *it;
 
@@ -298,14 +298,13 @@ namespace swo {
       FUNC;
       // Given
       deque<std::string> d{"Hello", "my", "friend", "!"};
-      std::string expected = "!";
 
 
       // When
       deque<std::string>::iterator it = d.end() - 1;
 
       // Then
-      assert((*it) == expected);
+      assert((*it) == d.back());
 
       success();
     }

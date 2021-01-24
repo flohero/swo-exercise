@@ -5,7 +5,7 @@
 :experimental:
 :listing-caption: Listing
 :source-highlighter: rouge
-:sourcedir: ../src/chess
+:sourcedir: ../src/deque
 :imgdir: ./img
 :imagesoutdir: ./out
 :toc:
@@ -32,7 +32,11 @@ Dasselbe nur umgekehrt gilt für den Index `first`, welcher auf das erste Elemen
 +-------------------------+
 ....
 
-
+=== loop_back_counter
+Um einfach über den Ringbuffer zu iterieren, gibt es einen `loop_back_counter`,
+welcher wenn ein bestimmtes Limit überschritten wird,
+den `Counter` zurück auf `0` stellt, bzw. wenn `0` unterschritten wird,
+wird der `Counter` zurück auf das Limit gesetzt.
 
 === Deque
 Eine Deque wird mit einem Ringbuffer implementiert.
@@ -169,4 +173,438 @@ digraph g1 {
     last -> N5;
     first -> N0;
 }
+----
+
+=== Entfernen von Elementen
+Beim Entfernen wird der jeweilige `Counter` entweder inkrementiert
+oder dekrementiert.
+
+.pop_back
+[graphviz,width=400]
+----
+digraph g1 {
+    layout="circo";
+    forcelabels=true;
+    node [shape = circle];
+    N0 [xlabel="0", label="\"Hello\""]
+    N1 [xlabel="1", label="\"other\""]
+    N2 [xlabel="2", label=""]
+    N3 [xlabel="3", label=""]
+    N4 [xlabel="4", label=""]
+    N5 [xlabel="5", label="\"value\""]
+
+    N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
+
+    last [fillcolor = aquamarine, style=filled, label="last = 0"];
+    first [fillcolor = indianred1, style=filled, label="first = 5"];
+    last -> N0;
+    first -> N5;
+}
+----
+
+.pop_front
+[graphviz,width=400]
+----
+digraph g1 {
+    layout="circo";
+    forcelabels=true;
+    node [shape = circle];
+    N0 [xlabel="0", label="\"Hello\""]
+    N1 [xlabel="1", label="\"other\""]
+    N2 [xlabel="2", label=""]
+    N3 [xlabel="3", label=""]
+    N4 [xlabel="4", label=""]
+    N5 [xlabel="5", label="\"value\""]
+
+    N0 -> N1 -> N2 -> N3 -> N4 -> N5 -> N0;
+
+    last [fillcolor = aquamarine, style=filled, label="last = 1"];
+    first [fillcolor = indianred1, style=filled, label="first = 0"];
+    last -> N1;
+    first -> N0;
+}
+----
+
+<<<
+== Source-Code
+
+.deque.h
+[source,cpp]
+----
+include::{sourcedir}/deque.h[]
+----
+
+.test_deque.h
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[]
+----
+
+.main.cpp
+[source,cpp]
+----
+include::{sourcedir}/main.cpp[]
+----
+
+== Test-Cases
+Zum Testen wurde - zum Teil - das Given/When/Then Pattern genutzt.
+Es wurden alle Test-Cases mithilfe von `valgrind` auf Memory Leaks, etc getestet.
+
+.Test auf Memory Leaks
+[source]
+----
+==66474==
+==66474== HEAP SUMMARY:
+==66474==     in use at exit: 0 bytes in 0 blocks
+==66474==   total heap usage: 44 allocs, 44 frees, 77,639 bytes allocated
+==66474==
+==66474== All heap blocks were freed -- no leaks are possible
+==66474==
+==66474== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+----
+
+=== simple_iterator_test
+Einfaches iterieren über die Deque mithilfe des Input-Operators.
+Der Inhalt der Deque wird in einen `stringstream` geschrieben und
+dessen Inhalt wird dann mit einem weiteren `string` verglichen.
+
+.simple_iterator_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=25..39]
+----
+
+.output
+[source]
+----
+simple_iterator_test
+SUCCESS!
+----
+
+=== equal_test
+Es wird getestet ob zwei Deques gleich sind.
+
+.equal_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=41..52]
+----
+
+.output
+[source]
+----
+equal_test
+SUCCESS!
+----
+
+=== not_equal_test
+Es wird getestet ob zwei Deques nicht gleich sind.
+
+.not_equal_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=54..65]
+----
+
+.output
+[source]
+----
+not_equal_test
+SUCCESS!
+----
+
+=== is_smaller_than_test
+Es wird getestet ob eine Deque kleiner als die andere ist.
+
+.is_smaller_than_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=67..78]
+----
+
+.output
+[source]
+----
+is_smaller_than_test
+SUCCESS!
+----
+
+=== is_not_smaller_than_with_same_sized_deque_test
+Hier wird getestet ob eine Deque kleiner als eine andere ist,
+obwohl sie ident sind. Es wird ein Falsch erwartet.
+
+.is_not_smaller_than_with_same_sized_deque_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=80..91]
+----
+
+.output
+[source]
+----
+is_not_smaller_than_with_same_sized_deque_test
+SUCCESS!
+----
+
+=== is_not_smaller_than_with_one_bigger_element_test
+Hier wird getestet ob eine Deque kleiner als eine andere ist,
+eine Deque, wessen Elemente alle kleiner sind bis auf eines.
+Es wird ein Falsch erwartet.
+
+.is_not_smaller_than_with_one_bigger_element_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=93..104]
+----
+
+.output
+[source]
+----
+is_not_smaller_than_with_one_bigger_element_test
+SUCCESS!
+----
+
+=== is_smaller_equal_than_test
+Es wird getestet ob zwei idente Deques kleiner gleich sind.
+
+.is_smaller_equal_than_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=106..117]
+----
+
+.output
+[source]
+----
+is_smaller_equal_than_test
+SUCCESS!
+----
+
+=== is_bigger_than_test
+Es wird getestet ob eine Deque größer als eine andere ist.
+
+.is_bigger_than_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=119..130]
+----
+
+.output
+[source]
+----
+is_bigger_than_test
+SUCCESS!
+----
+
+=== is_not_bigger_than_with_same_sized_deque_test
+Es wird getestet ob eine Deque größer als eine andere ist,
+obwohl diese ident sind.
+
+.is_not_bigger_than_with_same_sized_deque_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=132..143]
+----
+
+.output
+[source]
+----
+is_not_bigger_than_with_same_sized_deque_test
+SUCCESS!
+----
+
+=== is_bigger_equal_than_test
+Es wird getestet ob eine Deque größer gleich als eine andere ist,
+obwohl diese ident sind.
+
+.is_bigger_equal_than_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=145..156]
+----
+
+.output
+[source]
+----
+is_bigger_equal_than_test
+SUCCESS!
+----
+
+=== zero_constructor_test
+Es wird eine Deque von der Größe `0` erstellt,
+dies ist in dieser implementierung nicht erlaubt.
+
+.zero_constructor_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=159..176]
+----
+
+.output
+[source]
+----
+zero_constructor_test
+SUCCESS!
+----
+
+=== simple_push_back_test
+Es wird ein Element eingefügt.
+
+.simple_push_back_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=178..192]
+----
+
+.output
+[source]
+----
+simple_push_back_test
+SUCCESS!
+----
+
+=== push_back_test
+Es werden mehrere Elemente eingefügt.
+
+.push_back_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=194..209]
+----
+
+.output
+[source]
+----
+push_back_test
+SUCCESS!
+----
+
+=== pop_back_test
+Es wird das letzte Element entfernt.
+
+.pop_back_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=211..226]
+----
+
+.output
+[source]
+----
+pop_back_test
+SUCCESS!
+----
+
+=== push_front_test
+Es wird vorne ein Element eingefügt.
+
+.push_front_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=228..243]
+----
+
+.output
+[source]
+----
+push_front_test
+SUCCESS!
+----
+
+=== pop_front_test
+Es wird vorne ein Element entfernt.
+
+.pop_front_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=245..260]
+----
+
+.output
+[source]
+----
+pop_front_test
+SUCCESS!
+----
+
+=== index_operator_test
+Aus es wird aus der Deque an einer bestimmten Stelle im Index ein Element
+genommen und verglichen.
+
+.index_operator_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=262..275]
+----
+
+.output
+[source]
+----
+index_operator_test
+SUCCESS!
+----
+
+=== get_every_second_element_test
+Es wird jedes zweite Element mit einer vordefinierten Menge verglichen.
+
+.get_every_second_element_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=277..294]
+----
+
+.output
+[source]
+----
+get_every_second_element_test
+SUCCESS!
+----
+
+=== get_last_element_per_iterator_test
+Es wird der `end` Iterator um eins dekrementiert,
+dieser sollte dann auf das selbe Element zeigen, wie die `back` Funktion.
+
+.get_last_element_per_iterator_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=296..310]
+----
+
+.output
+[source]
+----
+get_last_element_per_iterator_test
+SUCCESS!
+----
+
+=== swap_deque_test
+Es werden zwei deques geswapt.
+
+.swap_deque_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=312..327]
+----
+
+.output
+[source]
+----
+swap_deque_test
+SUCCESS!
+----
+
+=== move_constructor_test
+Es wird ein Iterator zu einem anderen gemoved.
+
+.move_constructor_test
+[source,cpp]
+----
+include::{sourcedir}/test_deque.h[lines=329..342]
+----
+
+.output
+[source]
+----
+move_constructor_test
+SUCCESS!
 ----

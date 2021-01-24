@@ -21,6 +21,7 @@
 #define DEFAULT_SIZE 256
 #define MIN_SIZE 0
 
+#define RESIZE_FACTOR 2
 namespace swo {
 
   template<typename T>
@@ -511,7 +512,7 @@ namespace swo {
      */
     void auto_resize() {
       if (full()) {
-        resize(capacity * 2);
+        resize(capacity * RESIZE_FACTOR);
       }
     }
 

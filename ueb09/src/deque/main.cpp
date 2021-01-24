@@ -7,7 +7,7 @@
 using namespace swo;
 
 int main() {
-  test_deque::simple_print_test();
+  test_deque::simple_iterator_test();
 
   test_deque::equal_test();
   test_deque::not_equal_test();
