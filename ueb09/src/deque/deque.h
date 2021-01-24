@@ -199,8 +199,8 @@ namespace swo {
       }
 
     private:
-      deque<T> *deq{nullptr};
       size_type index{0};
+      deque<T> *deq{nullptr};
 
       friend class deque<T>;
 
@@ -221,13 +221,13 @@ namespace swo {
      * @param count the maximal amount of elements the deque can hold
      */
     explicit deque(size_type count) : capacity{count},
-                                      buffer{new value_type[capacity]},
                                       last{capacity},
                                       first{capacity} {
       // Check if count is bigger than zero, even though size_t can be negative since it is unsigned
       if (count <= MIN_SIZE) {
         throw std::invalid_argument("Count must be bigger than " + std::to_string(MIN_SIZE));
       }
+      buffer = new value_type[capacity];
     }
 
     /**

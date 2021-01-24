@@ -2,30 +2,20 @@
 // Created by florian on 14.01.21.
 //
 #include <iostream>
-#include "deque.h"
+#include "test_deque.h"
 
 using namespace swo;
 
 int main() {
-  deque<std::string> d{1, "3"};
-  d.push_back("4");
-  d.push_front("3");
-  for(auto & it : d) {
-    std::cout << it << " ";
-  }
-  std::cout << std::endl;
+  test_deque::simple_print_test();
+  test_deque::equal_test();
+  test_deque::zero_constructor_test();
+  test_deque::simple_push_back_test();
+  test_deque::push_back_test();
+  test_deque::push_front_test();
+  test_deque::pop_back_test();
+  test_deque::pop_front_test();
+  test_deque::index_operator_test();
 
-  deque<std::string> d2{1};
-  d2.push_back("3");
-  d2.push_back("3");
-  d2.push_back("4");
-
-  if(d == d2) {
-    std::cout << "Are equal" << std::endl;
-  }
-
-  d2.push_back("4");
-  if(d != d2) {
-    std::cout << "Are not equal" << std::endl;
-  }
+  return EXIT_SUCCESS;
 }
