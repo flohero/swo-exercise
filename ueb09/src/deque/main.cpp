@@ -33,5 +33,11 @@ int main() {
 
   test_deque::index_operator_test();
 
+  test_deque::get_every_second_element_test();
+  test_deque::get_last_element_per_iterator_test();
+
+  test_deque::swap_deque_test();
+  test_deque::move_constructor_test();
+
   return EXIT_SUCCESS;
 }

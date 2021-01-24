@@ -274,6 +274,74 @@ namespace swo {
       success();
     }
 
+    static void get_every_second_element_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<std::string> d{"Hello", "my", "friend", "!"};
+      std::string expected[] = {"Hello", "friend"};
+
+      int i = 0;
+      for (deque<std::string>::iterator it = d.begin(); it < d.end(); it += 2, i += 2) {
+        // When
+        std::string res = *it;
+
+        // Then
+        assert(expected[i] == res);
+      }
+
+      success();
+    }
+
+    static void get_last_element_per_iterator_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<std::string> d{"Hello", "my", "friend", "!"};
+      std::string expected = "!";
+
+
+      // When
+      deque<std::string>::iterator it = d.end() - 1;
+
+      // Then
+      assert((*it) == expected);
+
+      success();
+    }
+
+    static void swap_deque_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<std::string> d{"Hello", "my", "friend", "!"};
+      deque<std::string> d2{"Hello", "World", "!"};
+      deque<std::string> expected{"Hello", "my", "friend", "!"};
+
+
+      // When
+      d.swap(d2);
+
+      // Then
+      assert(d2 == expected);
+      success();
+    }
+
+    static void move_constructor_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<std::string> d{"Hello", "my", "friend", "!"};
+      deque<std::string> expected{"Hello", "my", "friend", "!"};
+
+      // When
+      deque<std::string> d2{std::move(d)};
+
+      // Then
+      assert(d2 == expected);
+      success();
+    }
+
   private:
     static void separator() {
       std::cout << "--------------------------------------------" << std::endl;

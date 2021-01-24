@@ -148,7 +148,7 @@ namespace swo {
       ~iterator() = default;
 
       iterator &operator=(iterator const &src) {
-        if(this == src) {
+        if (this == src) {
           this->deq = src.deq;
           this->pos = src.pos;
           this->index = src.index;
@@ -260,9 +260,9 @@ namespace swo {
     deque(deque &&src) noexcept:
         capacity{src.capacity},
         size_{src.size_},
+        buffer{src.buffer},
         last{src.last},
-        first{src.first},
-        buffer{src.buffer} {
+        first{src.first} {
       src.buffer = nullptr;
     }
 
@@ -281,13 +281,14 @@ namespace swo {
 
 
     deque &operator=(deque const &src) {
-      if(this == src) {
+      if (this != &src) {
         delete[]this->buffer;
         this->buffer = new value_type[src.capacity];
+        this->capacity = src.capacity;
         this->first = 0;
         size_type count = 0;
         for (auto it : src) {
-          this->buffer[count] = it;
+          this->push_back(it);
           count++;
         }
         this->last = count - 1;
@@ -297,7 +298,7 @@ namespace swo {
     }
 
     deque &operator=(deque &&src) noexcept {
-      if (this != *src) {
+      if (this != &src) {
         this->buffer = src.buffer;
         src.buffer = nullptr;
         this->size_ = src.size_;
