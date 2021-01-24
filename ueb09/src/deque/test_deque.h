@@ -33,7 +33,7 @@ namespace swo {
       // When
       ss << d;
 
-      //Then
+      // Then
       assert(ss.str() == exp);
       success();
     }
@@ -41,7 +41,7 @@ namespace swo {
     static void equal_test() {
       separator();
       FUNC;
-      //Given
+      // Given
       deque<std::string> d{10, "TEST"};
       deque<std::string> d2{10, "TEST"};
 
@@ -50,6 +50,111 @@ namespace swo {
       assert(d == d2);
       success();
     }
+
+    static void not_equal_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<std::string> d{"Hello", "World", "!"};
+      deque<std::string> d2{"Hello", "Flo"};
+
+      // When
+      // Then
+      assert(d != d2);
+      success();
+    }
+
+    static void is_smaller_than_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<int> d{1, 2, 3, 4};
+      deque<int> d2{5, 6, 7, 8, 9};
+
+      // When
+      // Then
+      assert(d < d2);
+      success();
+    }
+
+    static void is_not_smaller_than_with_same_sized_deque_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<int> d{1, 2, 3, 4};
+      deque<int> d2{1, 2, 3, 4};
+
+      // When
+      // Then
+      assert(!(d < d2));
+      success();
+    }
+
+    static void is_not_smaller_than_with_one_bigger_element_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<int> d{1, 2, 3, 10};
+      deque<int> d2{5, 6, 7, 8, 9};
+
+      // When
+      // Then
+      assert(!(d < d2));
+      success();
+    }
+
+    static void is_smaller_equal_than_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<int> d{1, 2, 3, 10};
+      deque<int> d2{1, 2, 3, 10};
+
+      // When
+      // Then
+      assert(d <= d2);
+      success();
+    }
+
+    static void is_bigger_than_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<int> d{1, 2, 3, 4};
+      deque<int> d2{5, 6, 7, 8, 9};
+
+      // When
+      // Then
+      assert(d2 > d);
+      success();
+    }
+
+    static void is_not_bigger_than_with_same_sized_deque_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<int> d{1, 2, 3, 4};
+      deque<int> d2{1, 2, 3, 4};
+
+      // When
+      // Then
+      assert(!(d > d2));
+      success();
+    }
+
+    static void is_bigger_equal_than_test() {
+      separator();
+      FUNC;
+      // Given
+      deque<int> d{1, 2, 3, 10};
+      deque<int> d2{1, 2, 3, 10};
+
+      // When
+      // Then
+      assert(d >= d2);
+      success();
+    }
+
 
     static void zero_constructor_test() {
       separator();
